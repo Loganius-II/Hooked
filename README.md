@@ -156,7 +156,7 @@ These helpers keep math logic isolated and reusable.
 Make sure you have Python and Pygame installed:
 
 ```bash
-(python3 -m) pip install -r requirements.txt
+(python3/python/py -m) pip install -r requirements.txt
 ```
 
 Then run:
@@ -182,4 +182,6 @@ python main.py
 
 ---
 
-Feel free to expand this README as systems stabilize or the project grows 🚀
+## Controls
+
+* see [CONTROLS](./CONTROLS.txt)
