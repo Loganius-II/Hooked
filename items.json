@@ -1,0 +1,9 @@
+{
+    "cargo_boxes":{
+        "basic": {
+            "cap": 10,
+            "cost": null,
+            "img": "Sprites/basic_cargo.png"
+        }
+    }
+}

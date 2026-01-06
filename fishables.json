@@ -1,0 +1,288 @@
+{
+  "Common": [
+    {
+      "name": "Common Salmon",
+      "description": "It's just a basic fish... don't get too excited.",
+      "img": "common_salmon.png",
+      "edible": true,
+      "hunger_increase": 15
+    },
+    {
+      "name": "Minnow",
+      "description": "Tiny, unimpressive, and barely edible.",
+      "img": "minnow.png",
+      "edible": true,
+      "hunger_increase": 5
+    },
+    {
+      "name": "Brown Trout",
+      "description": "Not the prettiest catch, but it counts.",
+      "img": "brown_trout.png",
+      "edible": true,
+      "hunger_increase": 12
+    },
+    {
+      "name": "Rusty Boot",
+      "description": "Why is there always a boot in the water?",
+      "img": "rusty_boot.png",
+      "edible": false,
+      "flammable": true
+    },
+    {
+      "name": "Pond Carp",
+      "description": "Fat and lazy. A bottom-feeder, just like your ex.",
+      "img": "pond_carp.png",
+      "edible": true,
+      "hunger_increase": 10
+    },
+    {
+      "name": "Tiny Perch",
+      "description": "Small enough to fit in your pocket. But why would you?",
+      "img": "tiny_perch.png",
+      "edible": true,
+      "hunger_increase": 8
+    },
+    {
+      "name": "Wet Newspaper",
+      "description": "Yesterday's news. Literally.",
+      "img": "wet_newspaper.png",
+      "edible": false,
+      "flammable": true
+    },
+    {
+      "name": "Mudcat",
+      "description": "Grimy and greasy, straight from the mud.",
+      "img": "mudcat.png",
+      "edible": true,
+      "hunger_increase": 14
+    },
+    {
+      "name": "Pebble Crab",
+      "description": "Technically not a fish. Barely a snack.",
+      "img": "pebble_crab.png",
+      "edible": true,
+      "hunger_increase": 6
+    },
+    {
+      "name": "Slippery Smelt",
+      "description": "Slips out of your hand more than it should.",
+      "img": "slippery_smelt.png",
+      "edible": true,
+      "hunger_increase": 9
+    }
+  ],
+
+  "Uncommon": [
+    {
+      "name": "Silver Pike",
+      "description": "Fast and aggressive. Keep your fingers safe.",
+      "img": "silver_pike.png",
+      "edible": true,
+      "hunger_increase": 25
+    },
+    {
+      "name": "Jade Snapper",
+      "description": "Its green scales shimmer in the sunlight.",
+      "img": "jade_snapper.png",
+      "edible": true,
+      "hunger_increase": 28
+    },
+    {
+      "name": "Ghost Carp",
+      "description": "Pale and silent, like a fishy phantom.",
+      "img": "ghost_carp.png",
+      "edible": true,
+      "hunger_increase": 22
+    },
+    {
+      "name": "Rockhead Grouper",
+      "description": "Hard-headed and stubborn to catch.",
+      "img": "rockhead_grouper.png",
+      "edible": true,
+      "hunger_increase": 30
+    },
+    {
+      "name": "Dusky Eel",
+      "description": "Slick, squirmy, and great grilled.",
+      "img": "dusky_eel.png",
+      "edible": true,
+      "hunger_increase": 35
+    },
+    {
+      "name": "Iridescent Tetra",
+      "description": "Glows faintly under moonlight.",
+      "img": "iridescent_tetra.png",
+      "edible": true,
+      "hunger_increase": 20
+    },
+    {
+      "name": "Bluegill Bass",
+      "description": "Aggressive fighter for its size.",
+      "img": "bluegill_bass.png",
+      "edible": true,
+      "hunger_increase": 26
+    },
+    {
+      "name": "Crimson Koi",
+      "description": "A beautiful catch, often kept in private ponds.",
+      "img": "crimson_koi.png",
+      "edible": true,
+      "hunger_increase": 30
+    },
+    {
+      "name": "Silt Dweller",
+      "description": "Burrows under the muck. Tough to find.",
+      "img": "silt_dweller.png",
+      "edible": true,
+      "hunger_increase": 24
+    },
+    {
+      "name": "Albino Catfish",
+      "description": "Rare coloring gives it away easily.",
+      "img": "albino_catfish.png",
+      "edible": true,
+      "hunger_increase": 32
+    }
+  ],
+
+  "Rare": [
+    {
+      "name": "Thunderfin",
+      "description": "They say it only appears during storms.",
+      "img": "thunderfin.png",
+      "edible": true,
+      "hunger_increase": 60
+    },
+    {
+      "name": "Lava Eel",
+      "description": "Hot to the touch. Found in volcanic waters.",
+      "img": "lava_eel.png",
+      "edible": true,
+      "hunger_increase": 65
+    },
+    {
+      "name": "Moonfish",
+      "description": "It glows faintly under moonlight. A sign of good luck.",
+      "img": "moonfish.png",
+      "edible": true,
+      "hunger_increase": 55
+    },
+    {
+      "name": "Glass Perch",
+      "description": "Completely transparent. Hard to see, harder to catch.",
+      "img": "glass_perch.png",
+      "edible": true,
+      "hunger_increase": 48
+    },
+    {
+      "name": "Deepsea Angler",
+      "description": "Terrifying teeth. Lives where light dies.",
+      "img": "deepsea_angler.png",
+      "edible": true,
+      "hunger_increase": 70
+    },
+    {
+      "name": "Whisperfin",
+      "description": "It hums softly when removed from the water.",
+      "img": "whisperfin.png",
+      "edible": true,
+      "hunger_increase": 52
+    },
+    {
+      "name": "Spectral Ray",
+      "description": "Ghostly and rare. Glides like a spirit.",
+      "img": "spectral_ray.png",
+      "edible": true,
+      "hunger_increase": 68
+    },
+    {
+      "name": "Golden Sturgeon",
+      "description": "Large, majestic, and covered in golden scales.",
+      "img": "golden_sturgeon.png",
+      "edible": true,
+      "hunger_increase": 70
+    },
+    {
+      "name": "Echo Pike",
+      "description": "You always hear it before you see it.",
+      "img": "echo_pike.png",
+      "edible": true,
+      "hunger_increase": 58
+    },
+    {
+      "name": "Shadow Haddock",
+      "description": "Dark as night, vanishes when not watched.",
+      "img": "shadow_haddock.png",
+      "edible": true,
+      "hunger_increase": 50
+    }
+  ],
+
+  "Legendary": [
+    {
+      "name": "Pirate's Sword",
+      "description": "Rusty but sharp. Was it lost in a duel at sea?",
+      "img": "pirates_sword.png",
+      "edible": false
+    },
+    {
+      "name": "Cursed Compass",
+      "description": "Always points to something you'd rather avoid.",
+      "img": "cursed_compass.png",
+      "edible": false
+    },
+    {
+      "name": "Kraken Tentacle",
+      "description": "Still twitching. Do NOT eat this raw.",
+      "img": "kraken_tentacle.png",
+      "edible": true,
+      "hunger_increase": 85
+    },
+    {
+      "name": "Poseidon's Tear",
+      "description": "A shimmering fish believed to be blessed by the sea god.",
+      "img": "poseidons_tear.png",
+      "edible": true,
+      "hunger_increase": 95
+    },
+    {
+      "name": "Ancient Harpoon",
+      "description": "Barnacle-covered and humming with power.",
+      "img": "ancient_harpoon.png",
+      "edible": false
+    },
+    {
+      "name": "Sirenfish",
+      "description": "Sings a song that tempts sailors to dive in.",
+      "img": "sirenfish.png",
+      "edible": true,
+      "hunger_increase": 80
+    },
+    {
+      "name": "Sunken Crown",
+      "description": "Encrusted with coral, belonged to a drowned king.",
+      "img": "sunken_crown.png",
+      "edible": false
+    },
+    {
+      "name": "Storm Eel",
+      "description": "Crackling with electricity, formed in hurricanes.",
+      "img": "storm_eel.png",
+      "edible": true,
+      "hunger_increase": 90
+    },
+    {
+      "name": "The Leviathan",
+      "description": "More legend than fish. If you caught this, you're a god.",
+      "img": "leviathan.png",
+      "edible": true,
+      "hunger_increase": 100
+    },
+    {
+      "name": "Mermaid's Scale",
+      "description": "Shimmering and warm. Proof of legends.",
+      "img": "mermaids_scale.png",
+      "edible": false
+    }
+  ]
+}
