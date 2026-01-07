@@ -22,6 +22,8 @@ font = pygame.font.Font('Font/slkscr.ttf', 18)
 ui_font = pygame.font.Font('Font/slkscr.ttf', 30)
 footer_font = pygame.font.Font('Font/slkscr.ttf', 15)
 
+VERSION = '0.1.5'
+
 # roll the music
 sounds.play_theme()
 
@@ -394,11 +396,11 @@ def cooker_btn_held(slot_type: str):
 
     x,y = pygame.mouse.get_pos()
 
-    if slot_type == 'fuel':
+    if slot_type == 'fuel' and not active_slot_player:
         cooker_fuel_coords['currentx'] = x - 50
         cooker_fuel_coords['currenty'] = y - 50
 
-    if slot_type == 'food':
+    elif slot_type == 'food' and not active_slot_player:
         cooker_food_coords['currentx'] = x - 50
         cooker_food_coords['currenty'] = y - 50
 
@@ -974,17 +976,36 @@ while running:
                         cargo_slot_list = [cargo_slot1,cargo_slot2,cargo_slot3,cargo_slot4,cargo_slot5]
                         player_slot_list = [player_slot1,player_slot2,player_slot3,player_slot4,player_slot5]
 
+                        # ignore this crazy nest :|
                         for i, player_slot in enumerate(player_slot_list):
                             if not cooker_open:
                                 for j, cargo_slot in enumerate(cargo_slot_list):
                                     if cargo_slot.rect.colliderect(player_slot):
-                                        #print(f'player slot {i+1} interacted with cargo slot {j+1}')
+                                        print(f'player slot {i+1} interacted with cargo slot {j+1}')
                                         if player_slot.rect.collidepoint(mouse_pos):
-                                            cargo_inventory.transfer_item(inventory, i+1, j+1)
+                                            if player_slot.rect.collidepoint(mouse_pos) and cargo_slot.rect.collidepoint(mouse_pos):
+                                                # if both are touching
 
+                                                # attempt transfer to the empty slot
+                                                if inventory.items[i+1] and not cargo_inventory.items[j+1]:
+                                                    cargo_inventory.transfer_item(inventory, i+1, j+1)
+                                                    print(i, j)
+                                                
+                                                elif not inventory.items[i+1] and cargo_inventory.items[j+1]:
+                                                    inventory.transfer_item(cargo_inventory, j+1, i+1)
+                                                    print(2)
+                                                    print(i, j)
+                                                
+                                                else:
+                                                    # just swap
+                                                    print(3)
+                                                    inventory.transfer_item(cargo_inventory, j+1, i+1)
+                                            else:
+                                                cargo_inventory.transfer_item(inventory, i+1, j+1)
+                                                print('transfering to cargo')
                                         else:
                                             inventory.transfer_item(cargo_inventory, j+1, i+1)
-
+                                            print('transfering to inventory')
                                         break
 
                             # for cooker
@@ -1393,7 +1414,7 @@ while running:
                 current_screen = 'game'
 
             # FOOTER
-            footer1 = footer_font.render('© 2025 LoSoft Productions . All rights reserved. Version 0.1.4', False, WHITE)
+            footer1 = footer_font.render(f'© 2025 LoSoft Productions . All rights reserved. Version {VERSION}', False, WHITE)
             SCREEN.blit(footer1, (center_x(footer1), 480))
 
             # update display
