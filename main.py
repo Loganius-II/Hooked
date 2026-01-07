@@ -22,6 +22,8 @@ font = pygame.font.Font('Font/slkscr.ttf', 18)
 ui_font = pygame.font.Font('Font/slkscr.ttf', 30)
 footer_font = pygame.font.Font('Font/slkscr.ttf', 15)
 
+VERSION = '0.1.5'
+
 # roll the music
 sounds.play_theme()
 
@@ -986,13 +988,17 @@ while running:
 
                                                 # attempt transfer to the empty slot
                                                 if inventory.items[i+1] and not cargo_inventory.items[j+1]:
-                                                    inventory.transfer_item(cargo_inventory, j+1, i+1)
+                                                    cargo_inventory.transfer_item(inventory, i+1, j+1)
+                                                    print(i, j)
                                                 
                                                 elif not inventory.items[i+1] and cargo_inventory.items[j+1]:
-                                                    cargo_inventory.transfer_item(inventory, i+1, j+1)
+                                                    inventory.transfer_item(cargo_inventory, j+1, i+1)
+                                                    print(2)
+                                                    print(i, j)
                                                 
                                                 else:
                                                     # just swap
+                                                    print(3)
                                                     inventory.transfer_item(cargo_inventory, j+1, i+1)
                                             else:
                                                 cargo_inventory.transfer_item(inventory, i+1, j+1)
@@ -1408,7 +1414,7 @@ while running:
                 current_screen = 'game'
 
             # FOOTER
-            footer1 = footer_font.render('© 2025 LoSoft Productions . All rights reserved. Version 0.1.4', False, WHITE)
+            footer1 = footer_font.render(f'© 2025 LoSoft Productions . All rights reserved. Version {VERSION}', False, WHITE)
             SCREEN.blit(footer1, (center_x(footer1), 480))
 
             # update display
