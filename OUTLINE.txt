@@ -78,8 +78,3 @@
 - fight with other sailors
 - add scurvy and other sickness
 
-
-
-
-add values to fish
-throw fish in water

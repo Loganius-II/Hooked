@@ -4,3 +4,5 @@ click in water to fish
 hover over backpack and press keys to display items
 
 press wasd to move
+
+click on map to set destination

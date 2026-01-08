@@ -46,6 +46,10 @@ walkingx = False
 walkingy = False
 playerx = 150
 playery = 80
+
+shipx = 100
+shipy = 100
+
 # directions
 facing_left = False
 facing_up = False
@@ -203,6 +207,11 @@ catch_fish_wood_panel = sprites.Sprite('Sprites/wood-ui-bar.png', 400, 100, 1)
 green_square_width = 0
 catch_fish_cursor = sprites.Sprite('Sprites/hook.png', 100,100, 1.2)
 catch_fish_cursor_x = 0
+
+green_flag = sprites.Sprite('Sprites/green-flag.png', 100, 100, scale=0.4)
+flag = False
+flagx = 0
+flagy = 0
 
 # caught fish card UI
 CARD_SCALE = 0.8
@@ -1068,6 +1077,15 @@ while running:
                             cargo_slot_coords[i]['currenty'] = CARGO_SLOT_DEFAULT_Y
 
                             player_slot_coords[i]['currenty'] = PLAYER_SLOT_DEFAULT_Y
+                    
+                    elif mapui.map_paper_sprite_surface.get_rect(topleft=(mapui.x, mapui.y)).collidepoint(mouse_pos):
+                        if mouse_pos == (flagx, flagy):
+                            flag = False
+                        
+                        else:
+                            flag = True
+                            flagx = mouse_pos[0]
+                            flagy = mouse_pos[1]
 
                 keys_pressed = pygame.key.get_pressed()
 
@@ -1286,6 +1304,10 @@ while running:
             thirst_txt = ui_font.render(f'THIRST {thirst}%', True, OCEAN_BLUE)
             tiredness_txt = ui_font.render(f'TIREDNESS {tiredness}%', True, GRAY)
             mapui.draw()
+            
+            if flag:
+                green_flag.draw(SCREEN, flagx, flagy-40)
+                green_flag.update()
 
             SCREEN.blit(coins_txt, (870, 10))
             SCREEN.blit(next_dest_txt, (20,455))
@@ -1333,6 +1355,8 @@ while running:
                     exec(f'player_slot{i}.on_hold(pygame.mouse.get_pressed(), mouse_pos, player_item_clicked, args=({i},))')
 
                 draw_player_slots()
+            
+
 
             # display top left corner dialogue
             SCREEN.blit(top_left_dialogue_txt, (0,0))
