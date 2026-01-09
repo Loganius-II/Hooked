@@ -49,6 +49,7 @@ playery = 80
 
 shipx = 100
 shipy = 100
+ship_marker = sprites.Sprite('Sprites/marker.png', 100, 100, 0.2)
 
 # directions
 facing_left = False
@@ -719,6 +720,19 @@ def center_x(surface: pygame.Surface):
 
     return SCREEN.get_width() // 2 - surface.get_width() // 2
 
+def draw_ship_marker():
+    # draws the ship makrer on map
+
+    # getting pygame surface
+    marker_surface = ship_marker.frames[0]
+
+    # getting the angle to rotate the ship to
+    angle = mathmatics.two_point_angle((shipx, shipy), (flagx, flagy))
+
+    marker = pygame.transform.rotate(marker_surface, angle)
+    
+    SCREEN.blit(marker, (shipx+680, shipy+70))
+
 # TITLE SCREEN
 def title_screen():
     # function for what happens in the title screen
@@ -1305,6 +1319,8 @@ while running:
             tiredness_txt = ui_font.render(f'TIREDNESS {tiredness}%', True, GRAY)
             mapui.draw()
             
+            draw_ship_marker()
+
             if flag:
                 green_flag.draw(SCREEN, flagx, flagy-40)
                 green_flag.update()
