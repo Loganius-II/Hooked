@@ -115,7 +115,7 @@ item = None
 # this is for checking when the clock ticks
 clock_tick = False
 # ship stats
-next_dest = 10
+next_dest = 0
 
 # events
 HUNGER_EVENT = pygame.USEREVENT + 1
@@ -721,15 +721,40 @@ def center_x(surface: pygame.Surface):
     return SCREEN.get_width() // 2 - surface.get_width() // 2
 
 def draw_ship_marker():
+    global next_dest, shipx, shipy, flagx, flagy
     # draws the ship makrer on map
 
     # getting pygame surface
     marker_surface = ship_marker.frames[0]
 
     # getting the angle to rotate the ship to
-    angle = mathmatics.two_point_angle((shipx, shipy), (flagx, flagy))
+    angle = mathmatics.two_point_angle((shipx+680, shipy+70), (flagx, flagy-40))
 
-    marker = pygame.transform.rotate(marker_surface, angle)
+    marker = pygame.transform.rotate(marker_surface, -angle-100)
+
+    # get and change distance
+    next_dest = int(mathmatics.two_point_distance((shipx+680, shipy+70), (flagx, flagy-40)))
+
+    if next_dest > 5:
+        # 1/15 makes 1px:.25s ratio at 60 fps
+        # if ship outside a 5 px radius of flag
+        if shipx+680 > flagx:
+            # then x needs to decrease
+            shipx -= 1/15
+        
+        elif shipx+680 < flagx:
+            shipx += 1/15
+        
+        if shipy+70 > flagy-40:
+            # you need to decrease y
+            shipy -= 1/15
+        
+        elif shipy+70 < flagy-40:
+            shipy += 1/15
+
+        
+
+    
     
     SCREEN.blit(marker, (shipx+680, shipy+70))
 
