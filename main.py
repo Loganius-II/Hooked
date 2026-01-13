@@ -49,6 +49,7 @@ playery = 80
 
 shipx = 100
 shipy = 100
+ship_angle = 0
 ship_marker = sprites.Sprite('Sprites/marker.png', 100, 100, 0.2)
 
 # directions
@@ -721,40 +722,23 @@ def center_x(surface: pygame.Surface):
     return SCREEN.get_width() // 2 - surface.get_width() // 2
 
 def draw_ship_marker():
-    global next_dest, shipx, shipy, flagx, flagy
+    global next_dest, shipx, shipy, flagx, flagy, ship_angle
     # draws the ship makrer on map
 
     # getting pygame surface
     marker_surface = ship_marker.frames[0]
 
     # getting the angle to rotate the ship to
-    angle = mathmatics.two_point_angle((shipx+680, shipy+70), (flagx, flagy-40))
+    #angle = mathmatics.two_point_angle((shipx+680, shipy+70), (flagx, flagy-40))
 
-    marker = pygame.transform.rotate(marker_surface, -angle-100)
+    marker = pygame.transform.rotate(marker_surface, ship_angle)
 
     # get and change distance
-    next_dest = int(mathmatics.two_point_distance((shipx+680, shipy+70), (flagx, flagy-40)))
+    next_dest = int(mathmatics.two_point_distance((shipx+680, shipy+70), (flagx, flagy-40))) if next_dest else 0
 
-    if next_dest > 5:
-        # 1/15 makes 1px:.25s ratio at 60 fps
-        # if ship outside a 5 px radius of flag
-        if shipx+680 > flagx:
-            # then x needs to decrease
-            shipx -= 1/15
-        
-        elif shipx+680 < flagx:
-            shipx += 1/15
-        
-        if shipy+70 > flagy-40:
-            # you need to decrease y
-            shipy -= 1/15
-        
-        elif shipy+70 < flagy-40:
-            shipy += 1/15
-
-        
-
-    
+    if not anchored:
+        # go forward
+        # based on angle
     
     SCREEN.blit(marker, (shipx+680, shipy+70))
 
@@ -1126,17 +1110,29 @@ while running:
                             flagx = mouse_pos[0]
                             flagy = mouse_pos[1]
 
+                            next_dest = int(mathmatics.two_point_distance((shipx+680, shipy+70), (flagx, flagy-40)))
+
                 keys_pressed = pygame.key.get_pressed()
 
                 if keys_pressed[pygame.K_d]:
+                    if anchored:
                         walkingx = True
                         facing_left = False
+                    
+                    else:
+                        # for controling ship
+                        ship_angle -= 1
 
 
 
                 elif keys_pressed[pygame.K_a]:
-                    walkingx = True
-                    facing_left = True
+                    if anchored:
+                        walkingx = True
+                        facing_left = True
+                    
+                    else:
+                        # for controlling the ship
+                        ship_angle += 1
 
                 else:
                     walkingx = False
