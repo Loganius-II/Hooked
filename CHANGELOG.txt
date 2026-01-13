@@ -10,4 +10,6 @@ UPDATE 0.2.0 DATE /TBD/
         - click on map to set destination point
             - double click to unplace marker
             - calculate distance
+
+        - anchor up and use A and D to control ship
 --
