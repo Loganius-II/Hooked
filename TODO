@@ -1,13 +1,6 @@
 
 Travelling
-    - click on map
-        - mark on map with flag
-        - if colliding with island then store and detect which island
-        
-    - raise anchor to start moving
-        - lower to stop
-    - calculate distance
-        - 1 px: 0.25 sec ratio
+    - if colliding with island then store and detect which island
 
 
 Later add:

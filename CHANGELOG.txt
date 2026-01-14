@@ -12,4 +12,6 @@ UPDATE 0.2.0 DATE /TBD/
             - calculate distance
 
         - anchor up and use A and D to control ship
+        - Going off map causes you to lose 25 dabloons to the sirens
+        
 --

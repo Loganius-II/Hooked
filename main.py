@@ -722,7 +722,7 @@ def center_x(surface: pygame.Surface):
     return SCREEN.get_width() // 2 - surface.get_width() // 2
 
 def draw_ship_marker():
-    global next_dest, shipx, shipy, flagx, flagy, ship_angle
+    global next_dest, shipx, shipy, flagx, flagy, ship_angle, dabloons, game, current_screen
     # draws the ship makrer on map
 
     # getting pygame surface
@@ -733,12 +733,56 @@ def draw_ship_marker():
 
     marker = pygame.transform.rotate(marker_surface, ship_angle)
 
+    marker_rect = marker_surface.get_rect(topleft=(shipx+680, shipy+70))
+    map_rect = mapui.map_paper_sprite_surface.get_rect(topleft=(mapui.x, mapui.y))
+
+    
+
     # get and change distance
-    next_dest = int(mathmatics.two_point_distance((shipx+680, shipy+70), (flagx, flagy-40))) if next_dest else 0
+    next_dest = int(mathmatics.two_point_distance((shipx+680, shipy+70), (flagx-5, flagy-20))) if next_dest else 0
 
     if not anchored:
         # go forward
         # based on angle
+        shipx, shipy = mathmatics.calculate_new_xy((shipx, shipy), 0.05, -ship_angle-110)
+
+        # check if running into island
+        for island in mapui.island_sprite_list:
+            if marker_rect.collidepoint((island.x, island.y)):
+                game = False
+                current_screen = "island"
+
+        if not map_rect.colliderect(marker_rect):
+            # THE SIRENS GOT YOU
+            # DONT SAIL BEYOND CHARTED WATERS
+            SCREEN.fill((0,0,0))
+
+            warning = ['Do not travel beyond ye chart\'d wat\'r', 'Ignore their inviting beck\'ns!', 'AaAaArRrRrGgG']
+
+            screen_txt1 = ui_font.render('Aye, The Sirens Got You!', True, WHITE)
+            screen_txt2 = font.render(random.choice(warning), True, WHITE)
+
+            SCREEN.blit(screen_txt1, (center_x(screen_txt1), 100))
+            SCREEN.blit(screen_txt2, (center_x(screen_txt2), 250))
+
+            pygame.display.update()
+
+            pygame.time.wait(2000)
+
+            screen_txt3 = font.render('-25 Gold Dabloons', True, RED)
+
+            dabloons = max(0, dabloons - 25)
+            
+            SCREEN.blit(screen_txt3, (center_x(screen_txt3), 300))
+
+            pygame.display.update()
+
+            pygame.time.wait(2000)
+
+            # reset ship
+            shipx = 100
+            shipy = 100
+
     
     SCREEN.blit(marker, (shipx+680, shipy+70))
 
@@ -1121,7 +1165,7 @@ while running:
                     
                     else:
                         # for controling ship
-                        ship_angle -= 1
+                        ship_angle -= 2.3
 
 
 
@@ -1132,7 +1176,7 @@ while running:
                     
                     else:
                         # for controlling the ship
-                        ship_angle += 1
+                        ship_angle += 2.3
 
                 else:
                     walkingx = False
@@ -1432,6 +1476,25 @@ while running:
             clock_tick = False
 
             clock.tick(60)
+    
+    elif current_screen == 'island':
+        in_island = True
+
+        while in_island:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
+                    in_island = False
+                    pygame.quit()
+                
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_a:
+                        in_island = False
+                        current_screen = "game"
+
+            
+            
+
 
     elif current_screen == 'home':
         home = True
