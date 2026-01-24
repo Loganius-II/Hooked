@@ -132,6 +132,21 @@ class Sprite:
         self.posx = 0
         self.posy = 0
 
+        self.rectangle = self.frames[0].get_rect(topleft=(0, 0))
+
+    def change_posx(self, newx):
+
+        self.posx = newx
+
+        self.rectangle.x = newx
+
+    def change_posy(self, newy):
+
+        self.posy = newy
+
+        self.rectangle.y = newy
+
+
     def load_frames(self):
         """
         Extracts and scales all frames from the sprite sheet.
@@ -166,6 +181,11 @@ class Sprite:
         """
 
         frame = self.frames[self.current_frame]
+
+        self.rectangle.topleft = (x+30, y+20)
+
+        #self.posx = x
+        #self.posy = y
 
         # if any are selected to be inverted then flip it
         if invert_h or invert_v:
@@ -447,7 +467,7 @@ class Map_UI:
 
         for _ in range(self.island_amount):
             # generating random island
-            island_num = self.random.randint(1, 10)
+            island_num = self.random.randint(1, 9)
             island_sprite = Sprite(f'Sprites/islands/island{island_num}.png', 100, 100, 0.8)
 
             # gen. random position for each island
@@ -463,12 +483,15 @@ class Map_UI:
             x = 100
             y = 100
 
-            island_sprite.posx = x
-            island_sprite.posy = y
+            island_sprite.change_posx(x)
+            island_sprite.change_posy(y)
 
             # adding to island list
             self.island_sprite_list.append(island_sprite)
             self.island_name_list.append(self.random.choice(islands))
+
+            island_sprite.rectangle.inflate_ip(-40, -40)
+
 
     def resolve_island_overlap(self):
         # this will fix coordinates of overlapping islands
@@ -487,8 +510,8 @@ class Map_UI:
                     while True:
 
                         if not island_rect.colliderect(island2_rect):
-                            island2.posx = x
-                            island2.posy = y
+                            island2.change_posx(x)
+                            island2.change_posy(y)
 
                             # re check so there was no new overlapping
                             # islands
@@ -498,6 +521,7 @@ class Map_UI:
                         y = self.random.randint(20, 180)
                         island2_rect.topleft = (x, y)
 
+
     def draw(self):
         # draws the map and since the location
         # on the screen shouldnt change there is a global x and y
@@ -506,11 +530,14 @@ class Map_UI:
 
         for i, island in enumerate(self.island_sprite_list):
 
-            island.draw(self.map_paper_sprite_surface, island.posx, island.posy-50)
+
+            island.draw(self.screen, island.posx + self.x, island.posy + self.y - 50)
 
             island_txt = ui_font.render(self.island_name_list[i], True, (255,255,255))
 
-            self.map_paper_sprite_surface.blit(island_txt, (island.posx, island.posy-20))
+            self.screen.blit(island_txt, (island.posx + self.x, island.posy + self.y))
+
+            #pygame.draw.rect(self.screen, (0,0,0), island.rectangle)
 
 '''
 Sprites are 128x128px for each frame

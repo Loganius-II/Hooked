@@ -736,7 +736,7 @@ def draw_ship_marker():
     marker_rect = marker_surface.get_rect(topleft=(shipx+680, shipy+70))
     map_rect = mapui.map_paper_sprite_surface.get_rect(topleft=(mapui.x, mapui.y))
 
-    
+
 
     # get and change distance
     next_dest = int(mathmatics.two_point_distance((shipx+680, shipy+70), (flagx-5, flagy-20))) if next_dest else 0
@@ -748,7 +748,8 @@ def draw_ship_marker():
 
         # check if running into island
         for island in mapui.island_sprite_list:
-            if marker_rect.collidepoint((island.x, island.y)):
+            if marker_rect.colliderect(island.rectangle):
+                print('ISLAND')
                 game = False
                 current_screen = "island"
 
@@ -772,7 +773,7 @@ def draw_ship_marker():
             screen_txt3 = font.render('-25 Gold Dabloons', True, RED)
 
             dabloons = max(0, dabloons - 25)
-            
+
             SCREEN.blit(screen_txt3, (center_x(screen_txt3), 300))
 
             pygame.display.update()
@@ -783,7 +784,7 @@ def draw_ship_marker():
             shipx = 100
             shipy = 100
 
-    
+
     SCREEN.blit(marker, (shipx+680, shipy+70))
 
 # TITLE SCREEN
@@ -828,21 +829,22 @@ def title_screen():
     pygame.time.delay(5000)
 
 
-title_screen()
+#title_screen()
+
+# randomly generating map
+print('loading map...')
+t = time.time()
+mapui = sprites.Map_UI(SCREEN)
+mapui.generate_map()
+mapui.resolve_island_overlap()
+t = time.time() - t
+print('loaded in', t, 'seconds')
 
 # game loop
 while running:
     if current_screen == 'game':
         game = True
-        print('loading map...')
-        SCREEN.fill((4, 255, 0))
-        pygame.display.update()
-        t = time.time()
-        mapui = sprites.Map_UI(SCREEN)
-        mapui.generate_map()
-        mapui.resolve_island_overlap()
-        t = time.time() - t
-        print('loaded in', t, 'seconds')
+
         while game:
             global green_square
             events = pygame.event.get()
@@ -1066,12 +1068,12 @@ while running:
                                                 if inventory.items[i+1] and not cargo_inventory.items[j+1]:
                                                     cargo_inventory.transfer_item(inventory, i+1, j+1)
                                                     print(i, j)
-                                                
+
                                                 elif not inventory.items[i+1] and cargo_inventory.items[j+1]:
                                                     inventory.transfer_item(cargo_inventory, j+1, i+1)
                                                     print(2)
                                                     print(i, j)
-                                                
+
                                                 else:
                                                     # just swap
                                                     print(3)
@@ -1144,11 +1146,11 @@ while running:
                             cargo_slot_coords[i]['currenty'] = CARGO_SLOT_DEFAULT_Y
 
                             player_slot_coords[i]['currenty'] = PLAYER_SLOT_DEFAULT_Y
-                    
+
                     elif mapui.map_paper_sprite_surface.get_rect(topleft=(mapui.x, mapui.y)).collidepoint(mouse_pos):
                         if mouse_pos == (flagx, flagy):
                             flag = False
-                        
+
                         else:
                             flag = True
                             flagx = mouse_pos[0]
@@ -1162,7 +1164,7 @@ while running:
                     if anchored:
                         walkingx = True
                         facing_left = False
-                    
+
                     else:
                         # for controling ship
                         ship_angle -= 2.3
@@ -1173,7 +1175,7 @@ while running:
                     if anchored:
                         walkingx = True
                         facing_left = True
-                    
+
                     else:
                         # for controlling the ship
                         ship_angle += 2.3
@@ -1383,7 +1385,7 @@ while running:
             thirst_txt = ui_font.render(f'THIRST {thirst}%', True, OCEAN_BLUE)
             tiredness_txt = ui_font.render(f'TIREDNESS {tiredness}%', True, GRAY)
             mapui.draw()
-            
+
             draw_ship_marker()
 
             if flag:
@@ -1436,7 +1438,7 @@ while running:
                     exec(f'player_slot{i}.on_hold(pygame.mouse.get_pressed(), mouse_pos, player_item_clicked, args=({i},))')
 
                 draw_player_slots()
-            
+
 
 
             # display top left corner dialogue
@@ -1476,7 +1478,7 @@ while running:
             clock_tick = False
 
             clock.tick(60)
-    
+
     elif current_screen == 'island':
         in_island = True
 
@@ -1486,14 +1488,14 @@ while running:
                     running = False
                     in_island = False
                     pygame.quit()
-                
+
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_a:
                         in_island = False
                         current_screen = "game"
 
-            
-            
+
+
 
 
     elif current_screen == 'home':
