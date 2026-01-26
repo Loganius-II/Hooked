@@ -215,6 +215,10 @@ flag = False
 flagx = 0
 flagy = 0
 
+background = sprites.Sprite('Sprites/background.png', 800, 50, 2.5)
+background2 = sprites.Sprite('Sprites/background.png', 800, 50, 2.5)
+background2.change_posx(2000)
+
 # caught fish card UI
 CARD_SCALE = 0.8
 BACKGROUND_COMMON = sprites.Sprite('Sprites/common-item-card.png',300,300,CARD_SCALE)
@@ -311,6 +315,22 @@ def error_evader(funct):
         except:
             pass
     return wrapper
+
+def move_background():
+    # returns nothing
+    # accepts nothing
+    # used in the else of if anchored to move background
+
+    background.change_posx(background.posx - 1)
+    background2.change_posx(background2.posx - 1)
+
+    if background.posx <= -2000:
+        background.posx = 2000
+
+    if background2.posx <= -2000:
+        background2.posx = 2000
+
+    print(background.posx, background2.posx)
 
 def draw_player_slots():
 
@@ -1258,6 +1278,10 @@ while running:
 
             # game code rendering
 
+            # draw background
+            background.draw(SCREEN, background.posx, background.posy)
+            background2.draw(SCREEN, background2.posx, background2.posy)
+
             # draw interact collision
             #pygame.draw.rect(SCREEN, , player_interact_box, 100)
 
@@ -1307,6 +1331,8 @@ while running:
                 else:
                     press_f = None
             else:
+                move_background()
+
                 anchor_up.draw(SCREEN, 160,140)
                 # check if player is colliding
                 # selecting the first frame since that is a pygame surface
@@ -1493,6 +1519,12 @@ while running:
                     if event.key == pygame.K_a:
                         in_island = False
                         current_screen = "game"
+                        shipx += 30
+                        ship_angle = -ship_angle
+
+            SCREEN.fill((255,255,255))
+            pygame.display.flip()
+
 
 
 
