@@ -528,7 +528,7 @@ class Map_UI:
 
             self.screen.blit(island_txt, (island.posx + self.x, island.posy + self.y))
 
-            pygame.draw.rect(self.screen, (0,0,0), island.rectangle)
+            #pygame.draw.rect(self.screen, (0,0,0), island.rectangle)
 
 '''
 Sprites are 128x128px for each frame
