@@ -23,7 +23,7 @@ font = pygame.font.Font('Font/slkscr.ttf', 18)
 ui_font = pygame.font.Font('Font/slkscr.ttf', 30)
 footer_font = pygame.font.Font('Font/slkscr.ttf', 15)
 
-VERSION = '0.1.5'
+VERSION = '0.2.0'
 
 # roll the music
 sounds.play_theme()
