@@ -1,14 +1,23 @@
-from pygame import mixer
+from pygame import mixer, time
+from time import sleep
+from threading import Thread
 import random
 
 mixer.pre_init(44100, -16, 2, 2048)
 mixer.init()
 
 def play_theme():
-    # plays theme that is on homescreen
-    mixer.music.load('MusicAndSFX/theme.ogg')
+    mixer.music.load('MusicAndSFX/Mambo Inn.ogg')
     mixer.music.set_volume(0.6)
     mixer.music.play(fade_ms=800)
+
+def enter_sea():
+    mixer.music.fadeout(2000)  # fade OUT current song over 2s
+    sleep(2)    # wait for fade to finish
+
+    mixer.music.load("MusicAndSFX/Li'l Darlin' 1994.mp3")
+    mixer.music.play(fade_ms=2000)  # fade IN new song
+
 
 def badadadink():
     # misc sound effect

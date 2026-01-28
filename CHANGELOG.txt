@@ -3,3 +3,17 @@ BUGFIX 0.1.5 DATE 1.7.2026
     - fixed item transfer in cargo box where item wouldn't transfer when both boxes hovered
     - other small bug fixes
 --
+
+UPDATE 0.2.0 DATE 1.28.2026
+--
+    - ADDED
+        - click on map to set destination point
+            - double click to unplace marker
+            - calculate distance
+
+        - anchor up and use A and D to control ship
+        - Going off map causes you to lose 25 dabloons to the sirens
+        - Scrolling background
+        - collisions with islands
+        
+--

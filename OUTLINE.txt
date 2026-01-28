@@ -1,0 +1,80 @@
+- create UI
+    - money
+    - ship stats
+        - cargo space
+        - health
+        - speed
+    - time to next destination
+    - player
+        - health
+        - hunger
+        - thirst
+        - tiredness
+            - sleep at tavern on an island
+    - MAP
+
+- add fishing
+    - random fish with different rarities
+    - sell or cook fish
+    - different fish weight
+
+- map/islands
+    - randomized island placement and name
+    - islands with trading/buying and selling
+    - sailing to islands
+    - docking and interacting with npcs
+    - services in-depth:
+        - ship maintanance center
+            - restores health to ship
+            - fixes other maintance needs
+        - general store
+            - buy medicine
+                - restores health
+            - buy food and water
+                - helps hunger and thirst
+                - different amount of effect
+        - ship appliance depot
+            - buy speed upgrades
+            - more rafts to attach on?
+            - different ways to cook fish
+                - camp fire: makes fish more filling and not hurt health
+                - stove: cookes 2 fish at a time
+                - power cooker: 3 fish at a time and faster
+            - chest
+                - for storing other rarities you find at sea
+                - they may be worth a lot but you might want to keep them for flexing
+                - different chest sizes
+            - table
+                - dry fish
+                - set an item down on it
+            - dedicated fish drying rack
+                - different levels of speed and storage
+                
+       - merchant trading center
+           - selling and buying goods for different prices
+
+- some sort of adversary e.g pirates, ship maintanance
+
+- upgrades to boat and supplies on the boat
+    - cargo space
+    - speed
+
+- sound FX
+    - interacting with objects
+    - sailing sound
+    - floating sound
+    - fishing sound
+    - placement sound
+    - background music
+        - soft piano (jazz?)
+
+- create home screen
+
+-- ideas for future updates --
+
+- day and night cycle
+- online features
+- other ai sailors
+- fight with other sailors
+- add scurvy and other sickness
+

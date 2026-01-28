@@ -4,7 +4,8 @@ A 2D survival / fishing game built with **Python** and **Pygame**. The game focu
 
 This README gives a **high-level overview** of the project structure and explains what each main file does without going too deep into implementation details.
 
----
+## [Change Log](./CHANGELOG.txt)
+
 
 ## 📁 Project Structure
 
@@ -172,6 +173,7 @@ python main.py
 * The project is **work-in-progress** and intentionally experimental
 * Some systems favor flexibility over strict structure
 * Global state is used heavily for rapid iteration
+* I learned a lot and changed lots of classes, etc mid project which is why some approaches like storing posx and posy in Sprites class is only used in certain places
 
 ---
 

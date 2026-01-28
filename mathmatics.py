@@ -46,3 +46,11 @@ def coordinate_range_x(left_x, right_x, target_x) -> bool:
         return True
 
     return False
+
+def calculate_new_xy(old_xy, speed, angle_in_degrees):
+    angle_rad = math.radians(angle_in_degrees)
+    delta_x = speed * math.cos(angle_rad)
+    delta_y = speed * math.sin(angle_rad)
+    new_x = old_xy[0] + delta_x
+    new_y = old_xy[1] + delta_y
+    return new_x, new_y
