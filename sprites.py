@@ -169,29 +169,20 @@ class Sprite:
             self.current_frame = (self.current_frame + 1) % len(self.frames)
             self.counter = 0
 
-    def draw(self, screen, x, y, invert_h = False, invert_v = False):
-        """
-        Draws the current frame at the specified position.
-
-        :param screen: The pygame screen surface.
-        :param x: X-coordinate to draw the sprite.
-        :param y: Y-coordinate to draw the sprite.
-        :param invert_h: inverts horizontally if true
-        :param invert_v: inverts vertically if true
-        """
-
+    def draw(self, screen, x, y, invert_h=False, invert_v=False):
         frame = self.frames[self.current_frame]
 
-        self.rectangle.topleft = (x+30, y+20)
-
-        #self.posx = x
-        #self.posy = y
-
-        # if any are selected to be inverted then flip it
         if invert_h or invert_v:
-            frame = pygame.transform.flip(self.frames[self.current_frame], invert_h, invert_v)
+            frame = pygame.transform.flip(frame, invert_h, invert_v)
 
-        screen.blit(frame, (x, y))
+        # get the sprite rect at (x, y)
+        sprite_rect = frame.get_rect(topleft=(x, y))
+
+        # center your rectangle on the sprite
+        self.rectangle.center = sprite_rect.center
+
+        screen.blit(frame, sprite_rect)
+
 
     def pg_surface(self) -> pygame.surface:
         # accepts no arguments
@@ -537,7 +528,7 @@ class Map_UI:
 
             self.screen.blit(island_txt, (island.posx + self.x, island.posy + self.y))
 
-            #pygame.draw.rect(self.screen, (0,0,0), island.rectangle)
+            pygame.draw.rect(self.screen, (0,0,0), island.rectangle)
 
 '''
 Sprites are 128x128px for each frame

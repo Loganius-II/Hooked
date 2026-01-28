@@ -12,6 +12,7 @@ from items import roll, Items, Inventory, random
 from textwrap import wrap
 import time
 import sounds
+import threading
 
 # starting code
 pygame.init()
@@ -215,9 +216,11 @@ flag = False
 flagx = 0
 flagy = 0
 
-background = sprites.Sprite('Sprites/background.png', 800, 50, 2.5)
-background2 = sprites.Sprite('Sprites/background.png', 800, 50, 2.5)
-background2.change_posx(2000)
+background = sprites.Sprite('Sprites/background.png', 800, 100, 1)
+background2 = sprites.Sprite('Sprites/background.png', 800, 100, 1)
+background3 = sprites.Sprite('Sprites/background.png', 800, 100, 1)
+background2.change_posx(800)
+background3.change_posx(1600)
 
 # caught fish card UI
 CARD_SCALE = 0.8
@@ -321,16 +324,13 @@ def move_background():
     # accepts nothing
     # used in the else of if anchored to move background
 
-    background.change_posx(background.posx - 1)
-    background2.change_posx(background2.posx - 1)
+    backgrounds = [background, background2, background3]
 
-    if background.posx <= -2000:
-        background.posx = 2000
+    for bg in backgrounds:
+        if bg.posx <= -800:
+            bg.posx += 2400  # 3 * 800
+        bg.change_posx(bg.posx - 1)
 
-    if background2.posx <= -2000:
-        background2.posx = 2000
-
-    print(background.posx, background2.posx)
 
 def draw_player_slots():
 
@@ -864,6 +864,7 @@ print('loaded in', t, 'seconds')
 while running:
     if current_screen == 'game':
         game = True
+        threading.Thread(target=sounds.enter_sea).start()
 
         while game:
             global green_square
@@ -1281,6 +1282,7 @@ while running:
             # draw background
             background.draw(SCREEN, background.posx, background.posy)
             background2.draw(SCREEN, background2.posx, background2.posy)
+            background3.draw(SCREEN, background3.posx,background3.posy)
 
             # draw interact collision
             #pygame.draw.rect(SCREEN, , player_interact_box, 100)
