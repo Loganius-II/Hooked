@@ -29,7 +29,7 @@ VERSION = '0.2.0'
 sounds.play_theme()
 
 # home, game, etc. screens global switcher
-current_screen = 'home'
+current_screen = 'island'
 
 # global colors
 WHITE = (255,255,255)
@@ -1510,6 +1510,20 @@ while running:
     elif current_screen == 'island':
         in_island = True
 
+        tile_map = [
+            [1,1,1,1,1],
+            [1,1,1,1,1],
+            [1,1,1,1,1],
+            [1,1,1,1,1],
+            [1,1,1,1,1],
+
+        ]
+
+        # island sprites
+        dirt_sprite = sprites.Sprite('Sprites/dirt.png', 147, 77, 1 )
+
+        tiles = [dirt_sprite]
+
         while in_island:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -1523,8 +1537,24 @@ while running:
                         current_screen = "game"
                         shipx += 30
                         ship_angle = -ship_angle
+            
+
 
             SCREEN.fill((255,255,255))
+
+            for row_index, row in enumerate(tile_map):
+                for col_index, tile in enumerate(row):
+                    if tile != 0:
+                        tile_sprite = tiles[tile -1]
+                        if not row_index % 2:
+                            tile_x = col_index * 147 - (147 //2)
+                            tile_y = row_index * 77 + (77 //2) 
+                        else:
+                            tile_x = col_index * 147
+                            tile_y = row_index * 77
+
+                        SCREEN.blit(tile_sprite.frames[0], (tile_x, tile_y))
+
             pygame.display.flip()
 
 
