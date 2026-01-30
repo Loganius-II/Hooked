@@ -1511,18 +1511,34 @@ while running:
         in_island = True
 
         tile_map = [
-            [1,1,1,1,1],
-            [1,1,1,1,1],
-            [1,1,1,1,1],
-            [1,1,1,1,1],
-            [1,1,1,1,1],
+            [1,1,1,1,1,1,1,1,1],
+            [1,2,1,3,1,1,1,1,1],
+            [1,1,1,1,4,5,6,1,1],
+            [1,1,1,1,1,1,1,1,1],
+            [1,1,1,1,1,1,1,1,1],
+            [1,1,1,1,1,1,1,1,1],
+            [1,1,1,1,1,1,1,1,1],
+            [1,1,1,1,1,1,1,1,1],
+            [1,1,1,1,1,1,1,1,1],
+            [1,1,1,1,1,1,1,1,1],
+            [1,1,1,1,1,1,1,1,1],
+            [1,1,1,1,1,1,1,1,1],
+            [1,1,1,1,1,1,1,1,1],
+            [1,1,1,1,1,1,1,1,1],
+            [1,1,1,1,1,1,1,1,1],
+
 
         ]
 
         # island sprites
         dirt_sprite = sprites.Sprite('Sprites/dirt.png', 147, 77, 1 )
+        house = sprites.Sprite('Sprites/house.png', 200, 200, 1)
+        fish = sprites.Sprite('Sprites/fish.png', 128, 72, 1)
+        oak_tree = sprites.Sprite('Sprites/oaktree.png', 178, 150, 1)
+        inn = sprites.Sprite('Sprites/inn.png', 128, 158, 1)
+        villa = sprites.Sprite('Sprites/villa.png', 231, 190, 1)
 
-        tiles = [dirt_sprite]
+        tiles = [dirt_sprite, house, fish, oak_tree, inn, villa]
 
         while in_island:
             for event in pygame.event.get():
@@ -1540,20 +1556,24 @@ while running:
             
 
 
-            SCREEN.fill((255,255,255))
+            #SCREEN.fill((208, 197, 155))
+            SCREEN.fill((84, 192, 29))
 
             for row_index, row in enumerate(tile_map):
                 for col_index, tile in enumerate(row):
                     if tile != 0:
                         tile_sprite = tiles[tile -1]
                         if not row_index % 2:
-                            tile_x = col_index * 147 - (147 //2)
-                            tile_y = row_index * 77 + (77 //2) 
-                        else:
-                            tile_x = col_index * 147
-                            tile_y = row_index * 77
+                            tile_x = col_index * 147 
+                            tile_y = row_index * 39
 
+                        
+                        else:
+                           tile_x = col_index * 147 + (147 //2)
+                           tile_y = row_index * 39 
+                        
                         SCREEN.blit(tile_sprite.frames[0], (tile_x, tile_y))
+
 
             pygame.display.flip()
 
