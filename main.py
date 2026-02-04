@@ -1529,8 +1529,9 @@ while running:
 
 
         ]
-        
-        gravel_sprite = sprites.Sprite('Sprites/dirt-texture.png', 500, 250, 2 )
+
+        gravel_sprite = sprites.Sprite('Sprites/newgrass.png', 128, 128, 1 )
+        gravel_sprite_bg = sprites.Sprite('Sprites/newgrass.png', 128, 128, 9 )
 
         # island sprites
         dirt_sprite = sprites.Sprite('Sprites/dirt.png', 147, 77, 1 )
@@ -1542,7 +1543,7 @@ while running:
         tavern = sprites.Sprite('Sprites/tavern.png', 231, 190, 1)
         thatched = sprites.Sprite('Sprites/thatched.png', 128, 119, 1)
 
-        tiles = [dirt_sprite, house, fish, oak_tree, inn, villa, tavern, thatched]
+        tiles = [gravel_sprite, house, fish, oak_tree, inn, villa, tavern, thatched]
 
         while in_island:
             for event in pygame.event.get():
@@ -1557,14 +1558,14 @@ while running:
                         current_screen = "game"
                         shipx += 30
                         ship_angle = -ship_angle
-            
+
 
 
             #SCREEN.fill((138, 196, 61))
             SCREEN.fill((207, 186, 147))
 
-            # gravel background
-            gravel_sprite.draw(SCREEN, 0,0)
+            # grass background
+            gravel_sprite_bg.draw(SCREEN, 0,0)
 
             # first drawing the ground
             for row_index, row in enumerate(tile_map):
@@ -1572,14 +1573,14 @@ while running:
                     if tile != 0:
                         tile_sprite = tiles[0]
                         if not row_index % 2:
-                            tile_x = col_index * 147 
+                            tile_x = col_index * 147
                             tile_y = row_index * 39
 
-                        
+
                         else:
                            tile_x = col_index * 147 + (147 //2)
-                           tile_y = row_index * 39 
-                        
+                           tile_y = row_index * 39
+
                         SCREEN.blit(tile_sprite.frames[0], (tile_x, tile_y))
 
             # then drawing the objects
@@ -1588,14 +1589,14 @@ while running:
                     if tile != 1:
                         tile_sprite = tiles[tile -1]
                         if not row_index % 2:
-                            tile_x = col_index * 147 
+                            tile_x = col_index * 147
                             tile_y = row_index * 39
 
-                        
+
                         else:
                            tile_x = col_index * 147 + (147 //2)
-                           tile_y = row_index * 39 
-                        
+                           tile_y = row_index * 39
+
                         SCREEN.blit(tile_sprite.frames[0], (tile_x, tile_y))
 
 
