@@ -1,1 +1,5 @@
 *.pyc
+__pycache__/mathmatics.cpython-312.pyc
+__pycache__/sounds.cpython-312.pyc
+__pycache__/sprites.cpython-312.pyc
+/__pycache__
