@@ -825,7 +825,7 @@ def title_screen():
     SCREEN.blit(graphic_cred2, (center_x(graphic_cred2), 290))
 
     pygame.display.flip()
-    pygame.time.delay(2500)
+    pygame.time.delay(1500)
 
     # game by
     SCREEN.fill((0,0,0))
@@ -833,7 +833,14 @@ def title_screen():
     SCREEN.blit(graphic_cred1, (center_x(graphic_cred1), 260))
 
     pygame.display.flip()
-    pygame.time.delay(2500)
+    pygame.time.delay(1750)
+
+    # headphones
+
+    headphone_sprite = sprites.Sprite('Sprites/headphone-exp.png', 992, 494, 1.1)
+    headphone_sprite.draw(SCREEN, center_x(headphone_sprite.frames[0]), 0)
+    pygame.display.flip()
+    pygame.time.delay(1750)
 
     # losoft presents...
 
@@ -1511,14 +1518,14 @@ while running:
         in_island = True
 
         tile_map = [
-            [1,1,1,1,1,1,1,1,1],
-            [1,2,1,3,1,4,1,1,1],
-            [1,1,1,1,4,5,6,1,1],
-            [1,1,1,1,1,1,1,1,1],
-            [1,1,1,1,8,1,1,1,1],
-            [1,1,1,1,1,1,1,1,1],
-            [1,1,1,1,1,1,1,1,1],
-            [1,1,1,1,1,1,1,1,1],
+            [1,1,1,1,1,1,4,1,1],
+            [2,1,2,1,1,1,1,4,1],
+            [1,1,1,1,1,1,4,1,1],
+            [1,1,1,1,1,1,4,1,1],
+            [2,1,2,1,4,1,4,4,1],
+            [1,1,1,1,1,4,4,1,1],
+            [1,1,1,3,1,4,1,1,1],
+            [1,1,1,1,4,1,4,1,1],
             [1,1,1,1,1,1,1,1,1],
             [1,1,1,1,1,1,1,1,1],
             [1,1,1,1,1,1,1,1,1],
@@ -1597,7 +1604,8 @@ while running:
                            tile_x = col_index * 147 + (147 //2)
                            tile_y = row_index * 39
 
-                        SCREEN.blit(tile_sprite.frames[0], (tile_x, tile_y))
+                        tile_sprite.draw(SCREEN, tile_x, tile_y)
+                        #SCREEN.blit(tile_sprite.frames[0], (tile_x, tile_y))
 
 
             pygame.display.flip()
