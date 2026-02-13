@@ -1557,10 +1557,11 @@ while running:
 
                         SCREEN.blit(tile_sprite.frames[0], (tile_x, tile_y))
 
-            # then drawing the objects
+            # then drawing bottom objects
             for row_index, row in enumerate(town1):
                 for col_index, tile in enumerate(row):
                     if tile != 1:
+                        
                         tile_sprite = tiles[tile -1]
                         if not row_index % 2:
                             tile_x = col_index * 147
@@ -1574,7 +1575,6 @@ while running:
                         invert_h = town1_invert_h[row_index][col_index]
                         tile_sprite.draw(SCREEN, tile_x, tile_y, invert_h)
                         #SCREEN.blit(tile_sprite.frames[0], (tile_x, tile_y))
-
 
             pygame.display.flip()
 

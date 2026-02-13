@@ -16,19 +16,22 @@ tavern = sprites.Sprite('Sprites/tavern.png', 231, 190, 1)
 thatched = sprites.Sprite('Sprites/thatched.png', 128, 190, 1)
 chapel = sprites.Sprite('Sprites/chapel.png', 128, 197, 1)
 clock = sprites.Sprite('Sprites/clock.png', 128, 243, 1)
+fruit = sprites.Sprite('Sprites/fruit.png', 128, 88, 1)
+flirtree = sprites.Sprite('Sprites/firtree.png', 128, 120, 1)
 
-tiles = [gravel_sprite, house, fish, oak_tree, inn, villa, tavern, thatched, chapel, clock]
+tiles = [gravel_sprite, house, fish, oak_tree, inn, villa, tavern, thatched, chapel, clock, fruit, flirtree]
+
 
 # tile maps
 town1 = [
-            [1,1,1,1,1,1,4,1,1],
-            [2,10,2,1,1,1,1,4,1],
-            [1,1,1,1,1,6,4,1,1],
-            [1,1,1,1,1,1,4,1,1],
-            [8,1,2,1,4,1,4,4,1],
-            [1,1,1,1,1,4,4,1,1],
-            [1,1,1,3,1,4,1,1,1],
-            [1,1,1,1,4,1,4,1,1],
+            [1,1,1,1,1,1,12,1,1],
+            [2,10,2,1,5,1,1,12,1],
+            [1,1,1,1,3,6,12,1,1],
+            [11,1,1,1,1,1,12,1,1],
+            [8,1,1,2,1,4,12,12,1],
+            [1,1,1,1,1,12,12,1,1],
+            [1,1,1,1,1,12,1,1,1],
+            [1,1,1,1,4,1,12,1,1],
             [1,1,1,1,1,1,1,1,1],
             [1,1,1,1,1,1,1,1,1],
             [1,1,1,1,1,1,1,1,1],
@@ -42,10 +45,10 @@ town1 = [
 
 town1_invert_h = [
     [0,0, 0,0,0,0,0,0,0],
-    [1,0, 0,0,0,0,0,0,0],
+    [1,0, 0,0,1,0,0,0,0],
     [0,0, 1,0,0,1,0,0,0],
     [0,0, 0,0,0,0,0,0,0],
-    [0,0, 1,0,0,0,0,0,0],
+    [0,0, 0,0,0,0,0,0,0],
     [0,0, 0,0,0,0,0,0,0],
     [0,0, 0,0,0,0,0,0,0],
     [0,0, 0,0,0,0,0,0,0],
