@@ -530,6 +530,50 @@ class Map_UI:
 
             #pygame.draw.rect(self.screen, (0,0,0), island.rectangle)
 
+class NPC():
+    def __init__(self):
+
+        self.random = importlib.import_module('random')
+
+        # NPCs
+        bystander1 = Sprite('Sprites/bystander1.png', 23, 56)
+        bystander2 = Sprite('Sprites/bystander2.png', 23, 56)
+        bystander3 = Sprite('Sprites/bystander3.png', 23, 56)
+        bystander4 = Sprite('Sprites/bystander4.png', 23, 56)
+        bystander5 = Sprite('Sprites/bystander5.png', 23, 56)
+
+        npc_list = [bystander1, bystander2, bystander3, bystander4, bystander5]
+
+        self.npc_sprite = self.random.choice(npc_list)
+
+        self.npc_sprite.posx = self.random.randint(100, 900)
+        self.npc_sprite.posy = self.random.randint(100, 400)
+
+        self.moving = False
+
+        self.frames_to_move = 0
+    
+    def should_move(self):
+        # returns bool whether or not npc will move
+        return self.random.randint(1, 60) == 1
+
+
+    def run(self):
+        # runs the npc brains
+        
+        if not self.moving:
+            # should it move?
+            self.moving = self.should_move()
+
+            self.frames_to_move = self.random.randint(60,240) # 4 secs max one sec min
+
+        else:
+            # get going
+            self.frames_to_move -= 1
+
+            # MOVE IN RANDOM DIRECTION
+
+
 '''
 Sprites are 128x128px for each frame
 '''
