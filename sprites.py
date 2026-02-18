@@ -536,11 +536,11 @@ class NPC():
         self.random = importlib.import_module('random')
 
         # NPCs
-        bystander1 = Sprite('Sprites/bystander1.png', 23, 56)
-        bystander2 = Sprite('Sprites/bystander2.png', 23, 56)
-        bystander3 = Sprite('Sprites/bystander3.png', 23, 56)
-        bystander4 = Sprite('Sprites/bystander4.png', 23, 56)
-        bystander5 = Sprite('Sprites/bystander5.png', 23, 56)
+        bystander1 = Sprite('Sprites/bystander1.png', 23, 56, 1)
+        bystander2 = Sprite('Sprites/bystander2.png', 23, 56, 1)
+        bystander3 = Sprite('Sprites/bystander3.png', 23, 56, 1)
+        bystander4 = Sprite('Sprites/bystander4.png', 23, 56, 1)
+        bystander5 = Sprite('Sprites/bystander5.png', 23, 56, 1)
 
         npc_list = [bystander1, bystander2, bystander3, bystander4, bystander5]
 
@@ -552,26 +552,57 @@ class NPC():
         self.moving = False
 
         self.frames_to_move = 0
+
+        self.direction = None
     
     def should_move(self):
         # returns bool whether or not npc will move
         return self.random.randint(1, 60) == 1
 
+    def move(self, direction: str):
+        # pass a direction and it will move the npc in that direction
 
-    def run(self):
+        if direction == 'left':
+            self.npc_sprite.change_posx(self.npc_sprite.posx - 0.1)
+
+        elif direction == 'right':
+            self.npc_sprite.change_posx(self.npc_sprite.posx + 0.1)
+        elif direction == 'up':
+            self.npc_sprite.change_posy(self.npc_sprite.posy - 0.1)
+
+        elif direction == 'down':
+            self.npc_sprite.change_posy(self.npc_sprite.posy + 0.1)
+
+    def run(self, screen):
         # runs the npc brains
         
         if not self.moving:
             # should it move?
             self.moving = self.should_move()
+            print(self.moving)
 
             self.frames_to_move = self.random.randint(60,240) # 4 secs max one sec min
+
+            self.npc_sprite.current_frame = 0
+
+            # pick direction (it will lock in once moving is true)
+            self.direction = self.random.choice(['right', 'left', 'up', 'down'])
 
         else:
             # get going
             self.frames_to_move -= 1
 
-            # MOVE IN RANDOM DIRECTION
+            if self.frames_to_move <= 0:
+                self.moving = False
+
+            # move
+            self.move(self.direction)
+            
+            self.npc_sprite.update()
+
+
+        self.npc_sprite.draw(screen, self.npc_sprite.posx, self.npc_sprite.posy, self.direction=='left' and self.moving)
+            
 
 
 '''

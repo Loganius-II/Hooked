@@ -223,6 +223,9 @@ background3 = sprites.Sprite('Sprites/background.png', 800, 100, 1)
 background2.change_posx(800)
 background3.change_posx(1600)
 
+# island npcs
+npc1 = sprites.NPC()
+
 # caught fish card UI
 CARD_SCALE = 0.8
 BACKGROUND_COMMON = sprites.Sprite('Sprites/common-item-card.png',300,300,CARD_SCALE)
@@ -1556,6 +1559,9 @@ while running:
                            tile_y = row_index * 39
 
                         SCREEN.blit(tile_sprite.frames[0], (tile_x, tile_y))
+
+            # draw npcs
+            npc1.run(SCREEN)
 
             # then drawing bottom objects
             for row_index, row in enumerate(town1):
