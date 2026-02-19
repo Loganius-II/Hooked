@@ -224,7 +224,7 @@ background2.change_posx(800)
 background3.change_posx(1600)
 
 # island npcs
-npc1 = sprites.NPC()
+npcs = [sprites.NPC() for _ in range(20)]
 
 # caught fish card UI
 CARD_SCALE = 0.8
@@ -1560,9 +1560,7 @@ while running:
 
                         SCREEN.blit(tile_sprite.frames[0], (tile_x, tile_y))
 
-            # draw npcs
-            npc1.run(SCREEN)
-
+            land_obj_list = []
             # then drawing bottom objects
             for row_index, row in enumerate(town1):
                 for col_index, tile in enumerate(row):
@@ -1579,8 +1577,15 @@ while running:
                            tile_y = row_index * 39
 
                         invert_h = town1_invert_h[row_index][col_index]
+                        land_obj_list.append(tile_sprite)
+                        tile_sprite.change_posx(tile_x)
+                        tile_sprite.change_posy(tile_y)
                         tile_sprite.draw(SCREEN, tile_x, tile_y, invert_h)
                         #SCREEN.blit(tile_sprite.frames[0], (tile_x, tile_y))
+
+            # draw npcs
+            for npc in npcs:
+                npc.run(SCREEN, land_obj_list)
 
             pygame.display.flip()
 

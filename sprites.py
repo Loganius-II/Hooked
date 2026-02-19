@@ -536,18 +536,18 @@ class NPC():
         self.random = importlib.import_module('random')
 
         # NPCs
-        bystander1 = Sprite('Sprites/bystander1.png', 23, 56, 1)
-        bystander2 = Sprite('Sprites/bystander2.png', 23, 56, 1)
-        bystander3 = Sprite('Sprites/bystander3.png', 23, 56, 1)
-        bystander4 = Sprite('Sprites/bystander4.png', 23, 56, 1)
-        bystander5 = Sprite('Sprites/bystander5.png', 23, 56, 1)
+        bystander1 = Sprite('Sprites/bystander1.png', 21, 53, 1)
+        bystander2 = Sprite('Sprites/bystander2.png', 21, 53, 1)
+        bystander3 = Sprite('Sprites/bystander3.png', 21, 53, 1)
+        bystander4 = Sprite('Sprites/bystander4.png', 21, 53, 1)
+        bystander5 = Sprite('Sprites/bystander5.png', 21, 53, 1)
 
         npc_list = [bystander1, bystander2, bystander3, bystander4, bystander5]
 
         self.npc_sprite = self.random.choice(npc_list)
 
-        self.npc_sprite.posx = self.random.randint(100, 900)
-        self.npc_sprite.posy = self.random.randint(100, 400)
+        self.npc_sprite.posx = self.random.randint(200, 500)
+        self.npc_sprite.posy = self.random.randint(200, 400)
 
         self.moving = False
 
@@ -573,13 +573,32 @@ class NPC():
         elif direction == 'down':
             self.npc_sprite.change_posy(self.npc_sprite.posy + 0.1)
 
-    def run(self, screen):
+    def opposite_direction(self):
+        direction = self.direction
+        if direction == 'left':
+            self.npc_sprite.change_posx(self.npc_sprite.posx + 3)
+            return 'right'
+        
+        if direction == 'right':
+            self.npc_sprite.change_posx(self.npc_sprite.posx - 3)
+            return 'left'
+
+        if direction == 'up':
+            self.npc_sprite.change_posy(self.npc_sprite.posy + 3)
+            return 'down'
+        
+        if direction == 'down':
+            self.npc_sprite.change_posy(self.npc_sprite.posy - 3)
+            return 'up'
+        
+    def run(self, screen, land_obj_list):
         # runs the npc brains
+        #landobjlist is a list of sprites 
         
         if not self.moving:
             # should it move?
             self.moving = self.should_move()
-            print(self.moving)
+            #print(self.moving)
 
             self.frames_to_move = self.random.randint(60,240) # 4 secs max one sec min
 
@@ -595,8 +614,18 @@ class NPC():
             if self.frames_to_move <= 0:
                 self.moving = False
 
-            # move
-            self.move(self.direction)
+            colliding = False
+
+            for obj in land_obj_list:
+                # before moving detect collision
+                if self.npc_sprite.rectangle.colliderect(obj.rectangle):
+                    colliding = True
+
+            if not colliding:
+                # move
+                self.move(self.direction)
+            else:
+                self.direction = self.opposite_direction()
             
             self.npc_sprite.update()
 
