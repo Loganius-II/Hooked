@@ -1580,6 +1580,7 @@ while running:
                         land_obj_list.append(tile_sprite)
                         tile_sprite.change_posx(tile_x)
                         tile_sprite.change_posy(tile_y)
+                        #pygame.draw.rect(SCREEN, (255,255,255), tile_sprite.rectangle)
                         tile_sprite.draw(SCREEN, tile_x, tile_y, invert_h)
                         #SCREEN.blit(tile_sprite.frames[0], (tile_x, tile_y))
 

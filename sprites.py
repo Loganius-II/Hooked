@@ -546,14 +546,17 @@ class NPC():
 
         self.npc_sprite = self.random.choice(npc_list)
 
-        self.npc_sprite.posx = self.random.randint(200, 500)
-        self.npc_sprite.posy = self.random.randint(200, 400)
+        self.npc_sprite.posx = self.random.randint(10, 500)
+        self.npc_sprite.posy = self.random.randint(10, 500)
 
         self.moving = False
 
         self.frames_to_move = 0
 
         self.direction = None
+
+        # tracking movement error
+        self.errors = 0
     
     def should_move(self):
         # returns bool whether or not npc will move
@@ -576,26 +579,34 @@ class NPC():
     def opposite_direction(self):
         direction = self.direction
         if direction == 'left':
-            self.npc_sprite.change_posx(self.npc_sprite.posx + 3)
+            self.npc_sprite.change_posx(self.npc_sprite.posx + 30)
             return 'right'
         
         if direction == 'right':
-            self.npc_sprite.change_posx(self.npc_sprite.posx - 3)
+            self.npc_sprite.change_posx(self.npc_sprite.posx - 30)
             return 'left'
 
         if direction == 'up':
-            self.npc_sprite.change_posy(self.npc_sprite.posy + 3)
+            self.npc_sprite.change_posy(self.npc_sprite.posy + 30)
             return 'down'
         
         if direction == 'down':
-            self.npc_sprite.change_posy(self.npc_sprite.posy - 3)
+            self.npc_sprite.change_posy(self.npc_sprite.posy - 30)
             return 'up'
         
     def run(self, screen, land_obj_list):
         # runs the npc brains
         #landobjlist is a list of sprites 
+
+        if self.errors >= 1:
+            # reset errors to 0
+            self.errors = 0
+
+            # respawn
+            self.npc_sprite.change_posx(0)
+            self.npc_sprite.change_posy(0)
         
-        if not self.moving:
+        elif not self.moving:
             # should it move?
             self.moving = self.should_move()
             #print(self.moving)
@@ -607,29 +618,34 @@ class NPC():
             # pick direction (it will lock in once moving is true)
             self.direction = self.random.choice(['right', 'left', 'up', 'down'])
 
+
         else:
             # get going
             self.frames_to_move -= 1
 
-            if self.frames_to_move <= 0:
-                self.moving = False
+            if self.frames_to_move % 2:
+                if self.frames_to_move <= 0:
+                    self.moving = False
 
-            colliding = False
+                colliding = False
 
-            for obj in land_obj_list:
-                # before moving detect collision
-                if self.npc_sprite.rectangle.colliderect(obj.rectangle):
-                    colliding = True
+                for obj in land_obj_list:
+                    # before moving detect collision
+                    if self.npc_sprite.rectangle.colliderect(obj.rectangle):
+                        colliding = True
 
-            if not colliding:
-                # move
-                self.move(self.direction)
-            else:
-                self.direction = self.opposite_direction()
-            
-            self.npc_sprite.update()
+                if not colliding:
+                    # move
+                    self.move(self.direction)
+                else:
+                    self.direction = self.opposite_direction()
+                    self.errors += 1
+                    
+                
+                self.npc_sprite.update()
 
 
+        #pygame.draw.rect(screen, (255,255,255), self.npc_sprite.rectangle)
         self.npc_sprite.draw(screen, self.npc_sprite.posx, self.npc_sprite.posy, self.direction=='left' and self.moving)
             
 
