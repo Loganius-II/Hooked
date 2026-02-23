@@ -1576,11 +1576,17 @@ while running:
                            tile_x = col_index * 147 + (147 //2)
                            tile_y = row_index * 39
 
+                        # create base rect for collisions
+                        tile_sprite.rectangle.h = 20
+                        
+
                         invert_h = town1_invert_h[row_index][col_index]
                         land_obj_list.append(tile_sprite)
                         tile_sprite.change_posx(tile_x)
                         tile_sprite.change_posy(tile_y)
-                        #pygame.draw.rect(SCREEN, (255,255,255), tile_sprite.rectangle)
+                        tile_sprite.rectangle.y += tile_sprite.frames[0].get_height() - 30
+                        
+                        pygame.draw.rect(SCREEN, (255,255,255), tile_sprite.rectangle)
                         tile_sprite.draw(SCREEN, tile_x, tile_y, invert_h)
                         #SCREEN.blit(tile_sprite.frames[0], (tile_x, tile_y))
 

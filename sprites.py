@@ -557,6 +557,8 @@ class NPC():
 
         # tracking movement error
         self.errors = 0
+
+        self.base_rect = pygame.Rect(self.npc_sprite.posx, self.npc_sprite.posy+40, 21, 10)
     
     def should_move(self):
         # returns bool whether or not npc will move
@@ -578,6 +580,7 @@ class NPC():
 
     def opposite_direction(self):
         direction = self.direction
+        self.frames_to_move = 400
         if direction == 'left':
             self.npc_sprite.change_posx(self.npc_sprite.posx + 30)
             return 'right'
@@ -587,12 +590,12 @@ class NPC():
             return 'left'
 
         if direction == 'up':
-            self.npc_sprite.change_posy(self.npc_sprite.posy + 30)
-            return 'down'
+            self.npc_sprite.change_posx(self.npc_sprite.posx + 30)
+            return 'right'
         
         if direction == 'down':
-            self.npc_sprite.change_posy(self.npc_sprite.posy - 30)
-            return 'up'
+            self.npc_sprite.change_posx(self.npc_sprite.posx - 30)
+            return 'left'
         
     def run(self, screen, land_obj_list):
         # runs the npc brains
@@ -603,8 +606,8 @@ class NPC():
             self.errors = 0
 
             # respawn
-            self.npc_sprite.change_posx(0)
-            self.npc_sprite.change_posy(0)
+            self.npc_sprite.posx = self.random.randint(10, 500)
+            self.npc_sprite.posy = self.random.randint(10, 500)
         
         elif not self.moving:
             # should it move?
@@ -631,7 +634,7 @@ class NPC():
 
                 for obj in land_obj_list:
                     # before moving detect collision
-                    if self.npc_sprite.rectangle.colliderect(obj.rectangle):
+                    if self.base_rect.colliderect(obj.rectangle):
                         colliding = True
 
                 if not colliding:
@@ -644,7 +647,8 @@ class NPC():
                 
                 self.npc_sprite.update()
 
-
+        self.base_rect.topleft = (self.npc_sprite.posx, self.npc_sprite.posy+40)
+        pygame.draw.rect(screen, (0,0,0), self.base_rect)
         #pygame.draw.rect(screen, (255,255,255), self.npc_sprite.rectangle)
         self.npc_sprite.draw(screen, self.npc_sprite.posx, self.npc_sprite.posy, self.direction=='left' and self.moving)
             
