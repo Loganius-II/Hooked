@@ -1557,7 +1557,9 @@ while running:
                         else:
                            tile_x = col_index * 147 + (147 //2)
                            tile_y = row_index * 39
-
+                        
+                        tile_sprite.change_posx(tile_x)
+                        tile_sprite.change_posy(tile_y)
                         SCREEN.blit(tile_sprite.frames[0], (tile_x, tile_y))
 
             land_obj_list = []

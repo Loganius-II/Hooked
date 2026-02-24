@@ -4,6 +4,7 @@ import math
 import numpy
 import sounds
 
+
 islands = [
     "Kali Cove",
     "Azurewind Isle",
@@ -636,6 +637,10 @@ class NPC():
                     # before moving detect collision
                     if self.base_rect.colliderect(obj.rectangle):
                         colliding = True
+                    
+                    elif self.base_rect.colliderect(obj.frames[0].get_rect(topleft=(obj.posx, obj.posy))):
+                        obj.draw(screen, obj.posx, obj.posy)
+                        
 
                 if not colliding:
                     # move
