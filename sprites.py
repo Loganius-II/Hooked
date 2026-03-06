@@ -608,7 +608,7 @@ class NPC():
 
             # respawn
             self.npc_sprite.posx = self.random.randint(10, 500)
-            self.npc_sprite.posy = self.random.randint(10, 500)
+            self.npc_sprite.posy = self.random.randint(10, 200)
         
         elif not self.moving:
             # should it move?
@@ -638,8 +638,7 @@ class NPC():
                     if self.base_rect.colliderect(obj.rectangle):
                         colliding = True
                     
-                    elif self.base_rect.colliderect(obj.frames[0].get_rect(topleft=(obj.posx, obj.posy))):
-                        obj.draw(screen, obj.posx, obj.posy)
+                    
                         
 
                 if not colliding:
@@ -653,7 +652,7 @@ class NPC():
                 self.npc_sprite.update()
 
         self.base_rect.topleft = (self.npc_sprite.posx, self.npc_sprite.posy+40)
-        pygame.draw.rect(screen, (0,0,0), self.base_rect)
+        #pygame.draw.rect(screen, (0,0,0), self.base_rect)
         #pygame.draw.rect(screen, (255,255,255), self.npc_sprite.rectangle)
         self.npc_sprite.draw(screen, self.npc_sprite.posx, self.npc_sprite.posy, self.direction=='left' and self.moving)
             

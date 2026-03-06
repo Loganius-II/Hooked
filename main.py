@@ -1522,7 +1522,27 @@ while running:
         in_island = True
 
         
+
+        p_walking = sprites.Player(
+            'Sprites/player-walking.png', 23, 56, 1,
+            PLAYER_INTERACT_BOX_OFFSETX=PLAYER_INTERACT_BOX_OFFSETX,
+            PLAYER_INTERACT_BOX_OFFSETY=PLAYER_INTERACT_BOX_OFFSETY
+            )
+        p_walking_up_diag = sprites.Player(
+            'Sprites/player-walking-diag.png', 21, 47, 1,
+            PLAYER_INTERACT_BOX_OFFSETX=PLAYER_INTERACT_BOX_OFFSETX,
+            PLAYER_INTERACT_BOX_OFFSETY=PLAYER_INTERACT_BOX_OFFSETY
+            )
+        current_player = p_walking
+
+        px = 100
+        py = 100      
+
+        facing_left = False 
+
         while in_island:
+            print(px, py)
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
@@ -1530,13 +1550,34 @@ while running:
                     pygame.quit()
 
                 elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_a:
+                    if event.key == pygame.K_e:
                         in_island = False
                         current_screen = "game"
                         shipx += 30
                         ship_angle = -ship_angle
+                    
+            # player movement
+            held_keys = pygame.key.get_pressed()
 
+            if held_keys[pygame.K_a]:
+                px -= 0.1
+                facing_left = True
 
+                current_player.update()
+
+            elif held_keys[pygame.K_d]:
+                px += 0.1
+                facing_left = False
+                current_player.update()
+
+            if held_keys[pygame.K_w]:
+                py -= 0.1
+                current_player.update()
+
+            elif held_keys[pygame.K_s]:
+                py += 0.1
+                current_player.update()
+                
 
             #SCREEN.fill((138, 196, 61))
             SCREEN.fill((207, 186, 147))
@@ -1563,6 +1604,9 @@ while running:
                         SCREEN.blit(tile_sprite.frames[0], (tile_x, tile_y))
 
             land_obj_list = []
+            # draw npcs
+            for npc in npcs:
+                npc.run(SCREEN, land_obj_list)
             # then drawing bottom objects
             for row_index, row in enumerate(town1):
                 for col_index, tile in enumerate(row):
@@ -1588,13 +1632,11 @@ while running:
                         tile_sprite.change_posy(tile_y)
                         tile_sprite.rectangle.y += tile_sprite.frames[0].get_height() - 30
                         
-                        pygame.draw.rect(SCREEN, (255,255,255), tile_sprite.rectangle)
+                        #pygame.draw.rect(SCREEN, (255,255,255), tile_sprite.rectangle)
                         tile_sprite.draw(SCREEN, tile_x, tile_y, invert_h)
                         #SCREEN.blit(tile_sprite.frames[0], (tile_x, tile_y))
 
-            # draw npcs
-            for npc in npcs:
-                npc.run(SCREEN, land_obj_list)
+            current_player.draw(SCREEN, px, py, facing_left)
 
             pygame.display.flip()
 
