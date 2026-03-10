@@ -1521,12 +1521,13 @@ while running:
     elif current_screen == 'island':
         in_island = True
 
-        
+        # for z index of player
+        player_above = False
 
         p_walking = sprites.Player(
             'Sprites/player-walking.png', 23, 56, 1,
-            PLAYER_INTERACT_BOX_OFFSETX=PLAYER_INTERACT_BOX_OFFSETX,
-            PLAYER_INTERACT_BOX_OFFSETY=PLAYER_INTERACT_BOX_OFFSETY
+            PLAYER_INTERACT_BOX_OFFSETX=10,
+            PLAYER_INTERACT_BOX_OFFSETY=30
             )
         p_walking_up_diag = sprites.Player(
             'Sprites/player-walking-diag.png', 21, 47, 1,
@@ -1535,8 +1536,8 @@ while running:
             )
         current_player = p_walking
 
-        px = 100
-        py = 100      
+        px = 205
+        py = 168      
 
         facing_left = False 
 
@@ -1578,12 +1579,40 @@ while running:
                 py += 0.1
                 current_player.update()
                 
+            # Sync player position to the player object for interact box
+            current_player.playerx = px
+            current_player.playery = py
+            
+                
 
             #SCREEN.fill((138, 196, 61))
             SCREEN.fill((207, 186, 147))
 
             # grass background
             gravel_sprite_bg.draw(SCREEN, 0,0)
+
+            # build land_obj_list from all tiles for NPC collision
+            land_obj_list = []
+            for row_index, row in enumerate(town1):
+                for col_index, tile in enumerate(row):
+                    if tile != 0:
+                        tile_sprite = tiles[0] if tile == 0 else tiles[tile -1] if tile != 1 else None
+                        if tile_sprite:
+                            if not row_index % 2:
+                                tile_x = col_index * 147
+                                tile_y = row_index * 39
+                            else:
+                                tile_x = col_index * 147 + (147 //2)
+                                tile_y = row_index * 39
+                            tile_sprite.rectangle.x = tile_x
+                            tile_sprite.rectangle.y = tile_y + tile_sprite.frames[0].get_height() -30
+                            tile_sprite.rectangle.w = tile_sprite.frames[0].get_width()
+                            tile_sprite.rectangle.h = 40
+                            land_obj_list.append(tile_sprite)
+
+            # run NPC movement
+            for npc in npcs:
+                npc.run(SCREEN, land_obj_list, do_movement=True, draw=False)
 
             # first drawing the ground
             for row_index, row in enumerate(town1):
@@ -1593,21 +1622,27 @@ while running:
                         if not row_index % 2:
                             tile_x = col_index * 147
                             tile_y = row_index * 39
-
-
                         else:
                            tile_x = col_index * 147 + (147 //2)
                            tile_y = row_index * 39
                         
                         tile_sprite.change_posx(tile_x)
-                        tile_sprite.change_posy(tile_y)
                         SCREEN.blit(tile_sprite.frames[0], (tile_x, tile_y))
+                        
+                        tile_sprite.change_posy(tile_y)
 
-            land_obj_list = []
-            # draw npcs
+            # draw player and NPCs below
+            if not player_above:
+                current_player.draw(SCREEN, px, py, facing_left)    
+
             for npc in npcs:
-                npc.run(SCREEN, land_obj_list)
+                if not npc.above:
+                    npc.run(SCREEN, [], do_movement=False, draw=True)
+
             # then drawing bottom objects
+            player_above = False
+            for npc in npcs:
+                npc.above = False
             for row_index, row in enumerate(town1):
                 for col_index, tile in enumerate(row):
                     if tile != 1:
@@ -1616,27 +1651,36 @@ while running:
                         if not row_index % 2:
                             tile_x = col_index * 147
                             tile_y = row_index * 39
-
-
                         else:
                            tile_x = col_index * 147 + (147 //2)
                            tile_y = row_index * 39
 
                         # create base rect for collisions
-                        tile_sprite.rectangle.h = 20
+                        tile_sprite.rectangle.h = 40
                         
-
                         invert_h = town1_invert_h[row_index][col_index]
-                        land_obj_list.append(tile_sprite)
                         tile_sprite.change_posx(tile_x)
                         tile_sprite.change_posy(tile_y)
-                        tile_sprite.rectangle.y += tile_sprite.frames[0].get_height() - 30
+                        tile_sprite.rectangle.y = tile_y + tile_sprite.frames[0].get_height() -30
+                        tile_sprite.rectangle.x = tile_x
+                        tile_sprite.rectangle.w = tile_sprite.frames[0].get_width()
                         
                         #pygame.draw.rect(SCREEN, (255,255,255), tile_sprite.rectangle)
                         tile_sprite.draw(SCREEN, tile_x, tile_y, invert_h)
-                        #SCREEN.blit(tile_sprite.frames[0], (tile_x, tile_y))
 
-            current_player.draw(SCREEN, px, py, facing_left)
+                        if current_player.player_interact_box.colliderect(tile_sprite.rectangle):
+                            player_above = True
+                        for npc in npcs:
+                            if npc.base_rect.colliderect(tile_sprite.rectangle):
+                                npc.above = True
+
+            # draw player and NPCs above
+            if player_above:
+                current_player.draw(SCREEN, px, py, facing_left)
+
+            for npc in npcs:
+                if npc.above:
+                    npc.run(SCREEN, [], do_movement=False, draw=True)
 
             pygame.display.flip()
 
