@@ -4,6 +4,7 @@ import math
 import numpy
 import sounds
 
+
 islands = [
     "Kali Cove",
     "Azurewind Isle",
@@ -178,9 +179,6 @@ class Sprite:
         # get the sprite rect at (x, y)
         sprite_rect = frame.get_rect(topleft=(x, y))
 
-        # center your rectangle on the sprite
-        self.rectangle.center = sprite_rect.center
-
         screen.blit(frame, sprite_rect)
 
 
@@ -263,8 +261,7 @@ class Player:
         :param invert_v: inverts vertically if true
         """
 
-        # updating the interaction box
-        self.player_interact_box = pygame.rect.Rect(x + self.PLAYER_INTERACT_BOX_OFFSETX, y + self.PLAYER_INTERACT_BOX_OFFSETY,10,20)
+        
 
         self.player_feet_box = pygame.rect.Rect(x+30, y+170, 40, 10)
         #pygame.draw.rect(screen, (255,255,255), self.player_feet_box)
@@ -275,8 +272,13 @@ class Player:
         if invert_h or invert_v:
             frame = pygame.transform.flip(self.frames[self.current_frame], invert_h, invert_v)
 
+        
         screen.blit(frame, (x, y))
 
+        # updating the interaction box
+        self.player_interact_box = pygame.rect.Rect(x + self.PLAYER_INTERACT_BOX_OFFSETX, y + self.PLAYER_INTERACT_BOX_OFFSETY,10,20)
+
+        #pygame.draw.rect(screen, (0,0,0), self.player_interact_box)
 
     def pg_surface(self) -> pygame.surface:
         # accepts no arguments
@@ -362,7 +364,7 @@ class Button_UI:
         else:
             # simple colored rectangle
             color = self.on_hover() if self.hovered else self.bg
-            pygame.draw.rect(screen, color, self.rect, border_radius=8)
+            #pygame.draw.rect(screen, color, self.rect, border_radius=8)
 
         # Draw text centered
         text_rect = self.text_surface.get_rect(center=self.rect.center)
@@ -522,13 +524,145 @@ class Map_UI:
         for i, island in enumerate(self.island_sprite_list):
 
 
-            island.draw(self.screen, island.posx + self.x, island.posy + self.y-30)
+            island.draw(self.screen, island.posx + self.x, island.posy + self.y)
 
             island_txt = ui_font.render(self.island_name_list[i], True, (255,255,255))
 
             self.screen.blit(island_txt, (island.posx + self.x, island.posy + self.y))
 
             #pygame.draw.rect(self.screen, (0,0,0), island.rectangle)
+
+class NPC():
+    def __init__(self):
+
+        self.random = importlib.import_module('random')
+
+        # NPCs
+        bystander1 = Sprite('Sprites/bystander1.png', 21, 53, 1)
+        bystander2 = Sprite('Sprites/bystander2.png', 21, 53, 1)
+        bystander3 = Sprite('Sprites/bystander3.png', 21, 53, 1)
+        bystander4 = Sprite('Sprites/bystander4.png', 21, 53, 1)
+        bystander5 = Sprite('Sprites/bystander5.png', 21, 53, 1)
+
+        npc_list = [bystander1, bystander2, bystander3, bystander4, bystander5]
+
+        self.npc_sprite = self.random.choice(npc_list)
+
+        self.npc_sprite.posx = self.random.randint(10, 500)
+        self.npc_sprite.posy = self.random.randint(10, 500)
+
+        self.moving = False
+
+        self.frames_to_move = 0
+
+        self.direction = None
+
+        # tracking movement error
+        self.errors = 0
+
+        self.base_rect = pygame.Rect(self.npc_sprite.posx, self.npc_sprite.posy+40, 21, 10)
+
+        self.above = False
+    
+    def should_move(self):
+        # returns bool whether or not npc will move
+        return self.random.randint(1, 60) == 1
+
+    def move(self, direction: str):
+        # pass a direction and it will move the npc in that direction
+
+        if direction == 'left':
+            self.npc_sprite.change_posx(self.npc_sprite.posx - 0.1)
+
+        elif direction == 'right':
+            self.npc_sprite.change_posx(self.npc_sprite.posx + 0.1)
+        elif direction == 'up':
+            self.npc_sprite.change_posy(self.npc_sprite.posy - 0.1)
+
+        elif direction == 'down':
+            self.npc_sprite.change_posy(self.npc_sprite.posy + 0.1)
+
+    def opposite_direction(self):
+        direction = self.direction
+        self.frames_to_move = 400
+        if direction == 'left':
+            self.npc_sprite.change_posx(self.npc_sprite.posx + 30)
+            return 'right'
+        
+        if direction == 'right':
+            self.npc_sprite.change_posx(self.npc_sprite.posx - 30)
+            return 'left'
+
+        if direction == 'up':
+            self.npc_sprite.change_posx(self.npc_sprite.posx + 30)
+            return 'right'
+        
+        if direction == 'down':
+            self.npc_sprite.change_posx(self.npc_sprite.posx - 30)
+            return 'left'
+        
+    def run(self, screen, land_obj_list, do_movement=True, draw=True):
+        # runs the npc brains
+        #landobjlist is a list of sprites 
+
+        if do_movement:
+            if self.errors >= 1:
+                # reset errors to 0
+                self.errors = 0
+
+                # respawn
+                self.npc_sprite.posx = self.random.randint(10, 500)
+                self.npc_sprite.posy = self.random.randint(10, 200)
+            
+            elif not self.moving:
+                # should it move?
+                self.moving = self.should_move()
+                #print(self.moving)
+
+                self.frames_to_move = self.random.randint(60,240) # 4 secs max one sec min
+
+                self.npc_sprite.current_frame = 0
+
+                # pick direction (it will lock in once moving is true)
+                self.direction = self.random.choice(['right', 'left', 'up', 'down'])
+
+
+            else:
+                # get going
+                self.frames_to_move -= 1
+
+                if self.frames_to_move % 2:
+                    if self.frames_to_move <= 0:
+                        self.moving = False
+
+                    colliding = False
+
+                    for obj in land_obj_list:
+                        # before moving detect collision
+                        if self.base_rect.colliderect(obj.rectangle):
+                            colliding = True
+                        
+                        
+                            
+
+                    if not colliding:
+                        # move
+                        self.move(self.direction)
+                    else:
+                        self.direction = self.opposite_direction()
+                        self.errors += 1
+                        
+                    
+                    self.npc_sprite.update()
+
+            self.base_rect.topleft = (self.npc_sprite.posx, self.npc_sprite.posy+40)
+
+        if draw:
+            #pygame.draw.rect(screen, (0,0,0), self.base_rect)
+            #pygame.draw.rect(screen, (255,255,255), self.npc_sprite.rectangle)
+            self.npc_sprite.draw(screen, self.npc_sprite.posx, self.npc_sprite.posy, self.direction=='left' and self.moving)
+            
+
 
 '''
 Sprites are 128x128px for each frame
