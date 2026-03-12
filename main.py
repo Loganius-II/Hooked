@@ -1539,6 +1539,9 @@ while running:
         px = 205
         py = 168      
 
+        # building currently intereacting with
+        current_building = None
+
         facing_left = False 
 
         while in_island:
@@ -1643,6 +1646,8 @@ while running:
             player_above = False
             for npc in npcs:
                 npc.above = False
+            
+            current_building = None
             for row_index, row in enumerate(town1):
                 for col_index, tile in enumerate(row):
                     if tile != 1:
@@ -1669,7 +1674,14 @@ while running:
                         tile_sprite.draw(SCREEN, tile_x, tile_y, invert_h)
 
                         if current_player.player_interact_box.colliderect(tile_sprite.rectangle):
+                            current_building = tile_sprite
+                            
                             player_above = True
+                        
+                        
+
+                        print(current_building == house)
+
                         for npc in npcs:
                             if npc.base_rect.colliderect(tile_sprite.rectangle):
                                 npc.above = True
@@ -1682,6 +1694,10 @@ while running:
                 if npc.above:
                     npc.run(SCREEN, [], do_movement=False, draw=True)
 
+            if current_building == house:
+                # BUY SCREEN
+                print('house')
+                sprites.Sprite('Sprites/island-UI/forsale.png', 500, 250, 0.6).draw(SCREEN, 700, 50)
             pygame.display.flip()
 
 

@@ -674,3 +674,4 @@ def get_img(sheet, frame, width = 128, height = 128, scale = 2) -> pygame.Surfac
     img.blit(sheet, (0,0), (frame*width, 0, width, height))
     img = pygame.transform.scale(img, (width * scale, height * scale))
     return img
+
