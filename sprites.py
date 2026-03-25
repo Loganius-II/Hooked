@@ -489,14 +489,14 @@ class Map_UI:
     def resolve_island_overlap(self):
         # this will fix coordinates of overlapping islands
         for i, island in enumerate(self.island_sprite_list):
-            island_rect = island.frames[0].get_rect(topleft=(island.posx, island.posy))
+            island_rect = island.frames[0].get_rect(topleft=(island.posx+ self.x, island.posy+ self.y))
 
             for j, island2 in enumerate(self.island_sprite_list):
                 # dont compare same islands
                 if i == j:
                     continue
 
-                island2_rect = island2.frames[0].get_rect(topleft=(island2.posx, island2.posy))
+                island2_rect = island2.frames[0].get_rect(topleft=(island2.posx+ self.x, island2.posy+ self.y))
 
                 # if they are colliding
                 if island_rect.colliderect(island2_rect):
@@ -512,7 +512,7 @@ class Map_UI:
                             break
                         x = self.random.randint(20,90)
                         y = self.random.randint(20, 180)
-                        island2_rect.topleft = (x, y)
+                        island2_rect.topleft = (x+ self.y, y+ self.y)
 
 
     def draw(self):
@@ -526,11 +526,13 @@ class Map_UI:
 
             island.draw(self.screen, island.posx + self.x, island.posy + self.y)
 
+            island.rectangle = island.frames[0].get_rect(topleft=(island.posx + self.x, island.posy+ self.y))
+
             island_txt = ui_font.render(self.island_name_list[i], True, (255,255,255))
 
             self.screen.blit(island_txt, (island.posx + self.x, island.posy + self.y))
 
-            pygame.draw.rect(self.screen, (0,0,0), island.rectangle)
+            #pygame.draw.rect(self.screen, (0,0,0), island.rectangle)
 
 class NPC():
     def __init__(self):
