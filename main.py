@@ -336,7 +336,7 @@ def move_background():
         bg.change_posx(bg.posx - 1)
 
 
-def draw_player_slots():
+def draw_player_slots(mode='normal'):
 
     # get all slot coords
     SLOT1_X = player_slot_coords.get(1).get('currentx')
@@ -352,11 +352,21 @@ def draw_player_slots():
     SLOT5_Y = player_slot_coords.get(5).get('currenty')
 
     # Draws the player inventory slots when opened
-    player_slot1.draw(SCREEN,SLOT1_X, SLOT1_Y)
-    player_slot2.draw(SCREEN,SLOT2_X, SLOT2_Y)
-    player_slot3.draw(SCREEN,SLOT3_X, SLOT3_Y)
-    player_slot4.draw(SCREEN,SLOT4_X, SLOT4_Y)
-    player_slot5.draw(SCREEN,SLOT5_X, SLOT5_Y)
+
+    if mode =='sell':
+        
+        player_slot1.draw(SCREEN,SLOT1_X, SLOT1_Y+300)
+        player_slot2.draw(SCREEN,SLOT2_X, SLOT2_Y+300)
+        player_slot3.draw(SCREEN,SLOT3_X, SLOT3_Y+300)
+        player_slot4.draw(SCREEN,SLOT4_X, SLOT4_Y+300)
+        player_slot5.draw(SCREEN,SLOT5_X, SLOT5_Y+300)
+
+    else:
+        player_slot1.draw(SCREEN,SLOT1_X, SLOT1_Y)
+        player_slot2.draw(SCREEN,SLOT2_X, SLOT2_Y)
+        player_slot3.draw(SCREEN,SLOT3_X, SLOT3_Y)
+        player_slot4.draw(SCREEN,SLOT4_X, SLOT4_Y)
+        player_slot5.draw(SCREEN,SLOT5_X, SLOT5_Y)
 
 def draw_cargo_slots():
     # draws the player inventory slots when opened
@@ -810,6 +820,10 @@ def draw_ship_marker():
 
 
     SCREEN.blit(marker, (shipx+680, shipy+70))
+
+def buy_house():
+    global dabloons
+    dabloons -= 10000 if dabloons >= 10000 else 0
 
 # TITLE SCREEN
 def title_screen():
@@ -1546,8 +1560,8 @@ while running:
 
         while in_island:
             print(px, py)
-
-            for event in pygame.event.get():
+            event_list = pygame.event.get()
+            for event in event_list:
                 if event.type == pygame.QUIT:
                     running = False
                     in_island = False
@@ -1678,9 +1692,7 @@ while running:
                             
                             player_above = True
                         
-                        
-
-                        print(current_building == house)
+                
 
                         for npc in npcs:
                             if npc.base_rect.colliderect(tile_sprite.rectangle):
@@ -1696,8 +1708,23 @@ while running:
 
             if current_building == house:
                 # BUY SCREEN
-                print('house')
+                
                 sprites.Sprite('Sprites/island-UI/forsale.png', 500, 250, 0.6).draw(SCREEN, 700, 50)
+
+                buy_btn = sprites.Button_UI('',125, 62.5, (0,0,0),custom_img_path='Sprites/island-UI/buybtn.png')
+
+                buy_btn.draw(SCREEN, 775, 200)
+
+                buy_btn.on_click(event_list, pygame.mouse.get_pos(), buy_house)
+
+
+            elif current_building == fish:
+                # SELL FISH
+
+                sprites.Sprite('Sprites/island-UI/fish.png', 500, 250, 0.9).draw(SCREEN, 500, 50)
+
+                draw_player_slots(mode='sell')
+
             pygame.display.flip()
 
 

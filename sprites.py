@@ -530,7 +530,7 @@ class Map_UI:
 
             self.screen.blit(island_txt, (island.posx + self.x, island.posy + self.y))
 
-            #pygame.draw.rect(self.screen, (0,0,0), island.rectangle)
+            pygame.draw.rect(self.screen, (0,0,0), island.rectangle)
 
 class NPC():
     def __init__(self):
