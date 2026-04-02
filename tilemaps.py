@@ -18,8 +18,9 @@ chapel = sprites.Sprite('Sprites/chapel.png', 128, 197, 1)
 clock = sprites.Sprite('Sprites/clock.png', 128, 243, 1)
 fruit = sprites.Sprite('Sprites/fruit.png', 128, 88, 1)
 flirtree = sprites.Sprite('Sprites/firtree.png', 128, 120, 1)
+hooded = sprites.Sprite('Sprites/island-UI/hooded.png', 100, 200, 0.3)
 
-tiles = [gravel_sprite, house, fish, oak_tree, inn, villa, tavern, thatched, chapel, clock, fruit, flirtree]
+tiles = [gravel_sprite, house, fish, oak_tree, inn, villa, tavern, thatched, chapel, clock, fruit, flirtree, hooded]
 
 
 # tile maps

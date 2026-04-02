@@ -825,6 +825,16 @@ def buy_house():
     global dabloons
     dabloons -= 10000 if dabloons >= 10000 else 0
 
+def next_dialogue(dialogue_list: list):
+    # increments dialogue index
+    global cdialogue_index
+
+    print('click')
+    cdialogue_index += 1
+
+    cdialogue_index = 0 if cdialogue_index >= len(dialogue_list) else cdialogue_index
+
+
 # TITLE SCREEN
 def title_screen():
     # function for what happens in the title screen
@@ -873,6 +883,11 @@ def title_screen():
     pygame.display.flip()
     pygame.time.delay(5000)
 
+talking = False
+def talk_to_hooded():
+    global talking
+
+    talking = True
 
 #title_screen()
 
@@ -1558,6 +1573,22 @@ while running:
 
         facing_left = False 
 
+        # talk button
+        talk_button = sprites.Button_UI('Talk', 300, 25, (0,0,0), font_name='Font/slkscr.ttf')
+
+        # talking npcs
+        npc_talking1 = sprites.Sprite('Sprites/island-UI/NPC-talking1.png', 500, 250)
+
+        hooded_talking = sprites.Sprite('Sprites/island-UI/hooded-talking.png', 500, 250, 1)
+
+        initial_time = time.time()
+
+        talking = False
+
+        cdialogue_index = 0
+
+        b = sprites.Button_UI('', 100, 25, (255,255,255), "Sprites/wood-ui-bar.png", font_name='Font/slkscr.ttf', font_size=24)
+
         while in_island:
             print(px, py)
             event_list = pygame.event.get()
@@ -1574,26 +1605,27 @@ while running:
                         shipx += 30
                         ship_angle = -ship_angle
                     
+            mouse_pos = pygame.mouse.get_pos()
             # player movement
             held_keys = pygame.key.get_pressed()
 
             if held_keys[pygame.K_a]:
-                px -= 0.1
+                px -= 0.22
                 facing_left = True
 
                 current_player.update()
 
             elif held_keys[pygame.K_d]:
-                px += 0.1
+                px += 0.22
                 facing_left = False
                 current_player.update()
 
             if held_keys[pygame.K_w]:
-                py -= 0.1
+                py -= 0.22
                 current_player.update()
 
             elif held_keys[pygame.K_s]:
-                py += 0.1
+                py += 0.22
                 current_player.update()
                 
             # Sync player position to the player object for interact box
@@ -1652,6 +1684,9 @@ while running:
             if not player_above:
                 current_player.draw(SCREEN, px, py, facing_left)    
 
+            #INTERACTABLE NPCS
+            hooded.draw(SCREEN, 800, 60)
+
             for npc in npcs:
                 if not npc.above:
                     npc.run(SCREEN, [], do_movement=False, draw=True)
@@ -1706,6 +1741,38 @@ while running:
                 if npc.above:
                     npc.run(SCREEN, [], do_movement=False, draw=True)
 
+
+            if current_player.player_interact_box.colliderect(hooded.sprite_rect):
+                hooded_talking.draw(SCREEN, 0,100)
+
+                talk_button.on_click(event_list, mouse_pos, talk_to_hooded)
+                
+
+                if time.time() - initial_time >= 0.01 and talking:
+                    hooded_talking.update()
+
+                    initial_time = time.time()
+
+                if not talking:
+                    talk_button.draw(SCREEN, 200, 400)
+
+                else:
+                    cd = sprites.hd[cdialogue_index]
+
+
+                    # draw the dialogue on the screen
+                    
+                    if b != sprites.Button_UI(cd, 100, 25, (255,255,255), "Sprites/wood-ui-bar.png", font_name='Font/slkscr.ttf', font_size=24):
+                        b = sprites.Button_UI(cd, 100, 25, (255,255,255), "Sprites/wood-ui-bar.png", font_name='Font/slkscr.ttf', font_size=24)
+                    
+                    
+                    b.on_click(event_list, mouse_pos, next_dialogue, (cd,))
+
+                    b.draw(SCREEN, 200, 400)
+                    
+            else:
+                talking = False
+
             if current_building == house:
                 # BUY SCREEN
                 
@@ -1721,7 +1788,11 @@ while running:
             elif current_building == fish:
                 # SELL FISH
 
-                sprites.Sprite('Sprites/island-UI/fish.png', 500, 250, 0.9).draw(SCREEN, 500, 50)
+                sprites.Sprite('Sprites/island-UI/fish.png', 500, 250, 0.9).draw(SCREEN, 500, 500)
+
+                # the npc talking dude
+                npc_talking1.update()
+                npc_talking1.draw(SCREEN, -200, -90)
 
                 draw_player_slots(mode='sell')
 
