@@ -23,6 +23,7 @@ running = True
 font = pygame.font.Font('Font/slkscr.ttf', 18)
 ui_font = pygame.font.Font('Font/slkscr.ttf', 30)
 footer_font = pygame.font.Font('Font/slkscr.ttf', 15)
+dialogue_font = pygame.font.Font('Font/slkscr.ttf', 19)
 
 VERSION = '0.2.0'
 
@@ -1586,8 +1587,8 @@ while running:
         talking = False
 
         cdialogue_index = 0
-
-        b = sprites.Button_UI('', 100, 25, (255,255,255), "Sprites/wood-ui-bar.png", font_name='Font/slkscr.ttf', font_size=24)
+        
+        dialogue = footer_font.render('', False, WHITE)
 
         while in_island:
             print(px, py)
@@ -1604,6 +1605,11 @@ while running:
                         current_screen = "game"
                         shipx += 30
                         ship_angle = -ship_angle
+
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    if dialogue.get_rect(topleft=(50, 400)).collidepoint(pygame.mouse.get_pos()):
+                        next_dialogue(sprites.hd)
+
                     
             mouse_pos = pygame.mouse.get_pos()
             # player movement
@@ -1746,7 +1752,6 @@ while running:
                 hooded_talking.draw(SCREEN, 0,100)
 
                 talk_button.on_click(event_list, mouse_pos, talk_to_hooded)
-                
 
                 if time.time() - initial_time >= 0.01 and talking:
                     hooded_talking.update()
@@ -1761,14 +1766,9 @@ while running:
 
 
                     # draw the dialogue on the screen
-                    
-                    if b != sprites.Button_UI(cd, 100, 25, (255,255,255), "Sprites/wood-ui-bar.png", font_name='Font/slkscr.ttf', font_size=24):
-                        b = sprites.Button_UI(cd, 100, 25, (255,255,255), "Sprites/wood-ui-bar.png", font_name='Font/slkscr.ttf', font_size=24)
-                    
-                    
-                    b.on_click(event_list, mouse_pos, next_dialogue, (cd,))
+                    dialogue = dialogue_font.render(cd, False, WHITE)
 
-                    b.draw(SCREEN, 200, 400)
+                    SCREEN.blit(dialogue, (50, 400))
                     
             else:
                 talking = False

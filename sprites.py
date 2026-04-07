@@ -682,6 +682,6 @@ def get_img(sheet, frame, width = 128, height = 128, scale = 2) -> pygame.Surfac
 font = pygame.font.Font('Font/slkscr.ttf', 18)
 WHITE = (255,255,255)
 #hooded dialogue
-hd = ['Hello traveler.', 'You are not from around here.', 'Who I am will be revealed in time. ', 'I have am looking for someone worthy of my journey. Many treasures reside in the waters but I am looking for a sacred treasure', 'The lost wing of Icarus.', 'Icarus is a mythological creature with wings made of wax. He flew too close to the sun and the wax melted. Legend says he fell within these waters.', 'Bring it to me and I will reward you immensly.']
+hd = ['Hello traveler.', 'You are not from around here.', 'Who I am will be revealed in time. ', 'I have am looking for someone worthy of my journey.', 'Many treasures reside in the waters but I am looking for a sacred treasure', 'The lost wing of Icarus.', 'Icarus is a mythological creature with wings made of wax.', 'He flew too close to the sun and the wax melted.', 'Legend says he fell within these waters.', 'Bring it to me and I will reward you immensly.', '']
 
 
