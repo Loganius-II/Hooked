@@ -1,7 +1,7 @@
-
-Travelling
-    - if colliding with island then store and detect which island
-
+next steps
+- randomize islands
+- working selling fish and displaying slots
+- make buyable goods
 
 Later add:
     - chance of something bad happening

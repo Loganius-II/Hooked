@@ -444,6 +444,23 @@ class Map_UI:
         self.map_paper_sprite = Sprite(self.bg_path, self.width, self.height, 2.5)
         self.map_paper_sprite_surface = self.map_paper_sprite.frames[0]
 
+        self.market_list = list() # list with coorsponding index market of islands
+
+    
+    def _gen_market_price(self):
+        # returns a dict of a market items and value
+
+        market = {'apefruit': 0, 'sweetsand': 0, 'tresfruit': 0, 'gold': 0 ,'silver': 0 ,'fairleaf': 0}
+
+        market["apefruit"] = self.random.randint(1, 10)
+        market["sweetsand"] = self.random.randint(5, 15)
+        market["tresfruit"] = self.random.randint(8, 30)
+        market["gold"] = self.random.randint(50, 250)
+        market["silver"] = self.random.randint(30, 100)
+        market["fairleaf"] = self.random.randint(2500, 5000)
+
+        self.market_list.append(market)
+
     def generate_map(self):
         # this is for generating all randomized parameters
 
@@ -457,6 +474,7 @@ class Map_UI:
         self.island_sprite_list = []
 
         self.island_name_list = []
+
 
         for _ in range(self.island_amount):
             # generating random island
@@ -482,6 +500,8 @@ class Map_UI:
             # adding to island list
             self.island_sprite_list.append(island_sprite)
             self.island_name_list.append(self.random.choice(islands))
+
+            self._gen_market_price()
 
             island_sprite.rectangle.inflate_ip(-40, -40)
 
@@ -526,7 +546,10 @@ class Map_UI:
 
             island.draw(self.screen, island.posx + self.x, island.posy + self.y)
 
-            island.rectangle = island.frames[0].get_rect(topleft=(island.posx + self.x, island.posy+ self.y))
+            island.rectangle = island.frames[0].get_rect(topleft=(island.posx + self.x+ 5, island.posy+ self.y+ 5))
+
+            island.rectangle.width = 50
+            island.rectangle.height = 50
 
             island_txt = ui_font.render(self.island_name_list[i], True, (255,255,255))
 

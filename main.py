@@ -306,6 +306,8 @@ player_pack_x = 0
 player_pack_y = 0
 player_pack_rect = player_pack.frames[0].get_rect()
 
+island_at = 0
+
 # SFX VARS
 reel_sfx = None
 
@@ -787,6 +789,11 @@ def draw_ship_marker():
                 print('ISLAND')
                 game = False
                 current_screen = "island"
+
+                # index of islandin list to coorspond with parallel lists e.g market list
+                global island_at
+                island_at = mapui.island_sprite_list.index(island)
+
 
         if not map_rect.colliderect(marker_rect):
             # THE SIRENS GOT YOU
@@ -1579,6 +1586,7 @@ while running:
 
         # talking npcs
         npc_talking1 = sprites.Sprite('Sprites/island-UI/NPC-talking1.png', 500, 250)
+        npc_talking2 = sprites.Sprite('Sprites/island-UI/NPC-talking2.png', 500, 250)
 
         hooded_talking = sprites.Sprite('Sprites/island-UI/hooded-talking.png', 500, 250, 1)
 
@@ -1589,6 +1597,21 @@ while running:
         cdialogue_index = 0
         
         dialogue = footer_font.render('', False, WHITE)
+
+        market_selected_item = 'None'
+        market_selected_item_qty = 0
+
+        # dock cutscene
+        island_cutscene = sprites.Sprite(
+            'Sprites/island-cutscene.png', 500, 250
+        )
+
+        for _ in range(130):
+            island_cutscene.draw(SCREEN, 0, 0)
+            island_cutscene.update()
+            time.sleep(0.01)
+
+            pygame.display.update()
 
         while in_island:
             print(px, py)
@@ -1637,10 +1660,7 @@ while running:
             # Sync player position to the player object for interact box
             current_player.playerx = px
             current_player.playery = py
-            
-                
 
-            #SCREEN.fill((138, 196, 61))
             SCREEN.fill((207, 186, 147))
 
             # grass background
@@ -1783,18 +1803,48 @@ while running:
                 buy_btn.draw(SCREEN, 775, 200)
 
                 buy_btn.on_click(event_list, pygame.mouse.get_pos(), buy_house)
+            
+            elif current_building == fruit:
+                # dict containing market info on current island
+                market_prices = mapui.market_list[island_at]
 
+                if time.time() - initial_time >= 0.01:
+                    npc_talking2.update()
+                    
+                    initial_time = time.time()
+                
+                npc_talking2.draw(SCREEN, -200, 0)
+
+                sprites.Sprite('Sprites/island-UI/buygoods.png', 400, 300, 1.3).draw(SCREEN, 450, 100)
+
+                # left row
+                SCREEN.blit(ui_font.render(str(market_prices['apefruit']), False, YELLOW), (630, 200))
+                SCREEN.blit(ui_font.render(str(market_prices['sweetsand']), False, YELLOW), (630, 250))
+                SCREEN.blit(ui_font.render(str(market_prices['tresfruit']), False, YELLOW), (630, 295))
+
+                # right row
+                SCREEN.blit(ui_font.render(str(market_prices['gold']), False, YELLOW), (850, 200))
+                SCREEN.blit(ui_font.render(str(market_prices['silver']), False, YELLOW), (850, 250))
+                SCREEN.blit(ui_font.render(str(market_prices['fairleaf']), False, YELLOW), (850, 295))
+
+                # buy and item select 
+                SCREEN.blit(ui_font.render(market_selected_item, False, WHITE), (150, 400))
+                SCREEN.blit(ui_font.render(str(market_selected_item_qty), False, WHITE), (250, 400))
 
             elif current_building == fish:
                 # SELL FISH
 
-                sprites.Sprite('Sprites/island-UI/fish.png', 500, 250, 0.9).draw(SCREEN, 500, 500)
+                sprites.Sprite('Sprites/island-UI/fish.png', 500, 250, 0.9).draw(SCREEN, 450, 100)
 
                 # the npc talking dude
                 npc_talking1.update()
                 npc_talking1.draw(SCREEN, -200, -90)
 
-                draw_player_slots(mode='sell')
+                display_inventory_slots('player')
+                for i in range(1,6):
+                    exec(f'player_slot{i}.on_hold(pygame.mouse.get_pressed(), mouse_pos, player_item_clicked, args=({i},))')
+
+                draw_player_slots('sell')
 
             pygame.display.flip()
 
