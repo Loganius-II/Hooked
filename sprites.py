@@ -289,7 +289,7 @@ import pygame
 
 class Button_UI:
     def __init__(self, text: str, width: int | float, height: int | float, bg: tuple,
-                 custom_img_path: str = None, font_name=None, font_size=24):
+                 custom_img_path: str = None, font_name=None, font_size=24, text_color=(255,255,255)):
         # Initializes button and customizations
         self.text = text
         self.custom_img_path = custom_img_path
@@ -312,7 +312,7 @@ class Button_UI:
             self.image = pygame.transform.scale(self.image, (self.width, self.height))
 
         # text surface
-        self.text_surface = self.font.render(self.text, True, self.WHITE)
+        self.text_surface = self.font.render(self.text, True, text_color)
 
         # rect placeholder
         self.rect = pygame.Rect(0, 0, self.width, self.height)
@@ -364,7 +364,7 @@ class Button_UI:
         else:
             # simple colored rectangle
             color = self.on_hover() if self.hovered else self.bg
-            #pygame.draw.rect(screen, color, self.rect, border_radius=8)
+            pygame.draw.rect(screen, color, self.rect, border_radius=8)
 
         # Draw text centered
         text_rect = self.text_surface.get_rect(center=self.rect.center)

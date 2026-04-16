@@ -24,6 +24,7 @@ font = pygame.font.Font('Font/slkscr.ttf', 18)
 ui_font = pygame.font.Font('Font/slkscr.ttf', 30)
 footer_font = pygame.font.Font('Font/slkscr.ttf', 15)
 dialogue_font = pygame.font.Font('Font/slkscr.ttf', 19)
+small_font = pygame.font.Font('Font/slkscr.ttf', 12)
 
 VERSION = '0.2.0'
 
@@ -192,6 +193,8 @@ raft_idle_front = sprites.Sprite('Sprites/idle-no-sail.png', 163, 146, y=312)
 raft_moving_front = sprites.Sprite('Sprites/move-no-sail.png', 163, 146, y=312)
 current_raft = raft_idle_front
 
+buy_market_message = ''
+
 player_walking = sprites.Player(
     'Sprites/player-walking.png', 23, 56, 4,
     PLAYER_INTERACT_BOX_OFFSETX=PLAYER_INTERACT_BOX_OFFSETX,
@@ -307,6 +310,7 @@ player_pack_y = 0
 player_pack_rect = player_pack.frames[0].get_rect()
 
 island_at = 0
+sell_fish_message = ''
 
 # SFX VARS
 reel_sfx = None
@@ -841,6 +845,117 @@ def next_dialogue(dialogue_list: list):
     cdialogue_index += 1
 
     cdialogue_index = 0 if cdialogue_index >= len(dialogue_list) else cdialogue_index
+
+def select_item(item):
+    global market_selected_item, market_selected_item_qty
+
+    if item != market_selected_item:
+        market_selected_item = item
+        market_selected_item_qty = 1
+
+    else:
+        market_selected_item_qty += 1
+
+def buy_goods_action(item: str, qty: int, market_prices:int):
+    # attempts to purchase goods
+
+    item = item.lower()
+    item = item.replace(' ', '')
+
+    cost = qty * market_prices[item]
+
+    global dabloons, buy_market_message
+
+    if cost > dabloons:
+        buy_market_message = 'Insufficient Dabloons'
+
+    else:
+        unsuccessful = True
+        for slot_item in inventory.items_list:
+            if slot_item.get('name') == item:
+
+                index = inventory.items_list.index(slot_item)
+                # stack items
+                slot_item['qty'] += qty
+
+                # replacing item with same item but higher qty
+                inventory.items_list[index] = slot_item
+                inventory.items[index+1] = slot_item
+
+                unsuccessful = False
+
+        if unsuccessful:
+            num_items = len(inventory.items_list)
+
+            # add items to inventory
+            unsuccessful = inventory.add_item({'name': item, 'qty':qty, 'rarity': 'Uncommon', 'x': 0, 'scale': 0.8}, num_items+1)
+                
+
+            if not unsuccessful:
+                # actually purchase item
+                dabloons -= cost
+                buy_market_message = 'Purchase Successful'
+            
+            else:
+                # display a message saying it couldnt add to inventory
+                buy_market_message = 'Unable to Add to Inventory'
+
+def sell_goods_action(item:str, qty: int, market_prices:int):
+    item_name = item
+    item = item.lower()
+    item = item.replace(' ', '')
+
+    # money you get if sell successful
+    sell_price = qty * market_prices[item]
+
+    global dabloons, buy_market_message
+    
+    num_of_item = 0
+
+    delete_indexes = []
+
+    # this makes it so if there is a split stack, it sells all
+    for slot_item in inventory.items_list:
+        if slot_item['name'] == item:
+            num_of_item += slot_item['qty']
+            delete_indexes.append(inventory.items_list.index(slot_item))
+
+
+    if num_of_item < qty:
+        buy_market_message = f'Not enough {item_name}'
+    
+    else:
+        dabloons += sell_price
+        buy_market_message = f'Sold {num_of_item} {item_name}'
+
+        # delete from inventory
+        for i in delete_indexes:
+            inventory.items[i+1] = ''
+            inventory.items_list.pop(delete_indexes)
+
+def sell_fish_action(index_of_item: int):
+    non_fish_names = ['apefruit', 'sweetsand', 'tresfruit', 'gold', 'silver', 'fairfruit']
+    
+    sell_item = inventory.items.get(index_of_item)
+
+    rarity = sell_item['rarity']
+
+    global sell_fish_message, dabloons
+
+    # check if item is a fish
+    if sell_item['name'] in non_fish_names:
+        sell_fish_message = 'Can\'t sell that item here. Try selling at the fruit stand.'
+
+    else:
+        inventory.items[index_of_item] = ''
+        inventory.items_list.pop(index_of_item+1)
+
+        # add money
+        value_dict = {'Common':15, 'Uncommon':25, 'Rare':50, 'Legendary': 9000, "Collectors": 100000}
+
+        dabloons += value_dict[rarity]
+
+        sell_fish_message = 'Sold Successfully'
 
 
 # TITLE SCREEN
@@ -1613,6 +1728,18 @@ while running:
 
             pygame.display.update()
 
+
+        # item select buttons for fruit stand
+        btn1 = sprites.Button_UI('+', 20, 20, WHITE , text_color=(0,0,0))
+        btn2 = sprites.Button_UI('+', 20, 20, WHITE , text_color=(0,0,0))
+        btn3 = sprites.Button_UI('+', 20, 20, WHITE , text_color=(0,0,0))
+        btn4 = sprites.Button_UI('+', 20, 20, WHITE , text_color=(0,0,0))
+        btn5 = sprites.Button_UI('+', 20, 20, WHITE , text_color=(0,0,0))
+        btn6 = sprites.Button_UI('+', 20, 20, WHITE , text_color=(0,0,0))
+
+        buy_market_btn = sprites.Button_UI('BUY', 100, 25, WHITE, font_name='Font/slkscr.ttf', text_color=(0, 224, 24))
+        sell_market_btn = sprites.Button_UI('SELL', 100, 25, WHITE, font_name='Font/slkscr.ttf', text_color=(224, 0, 0))
+
         while in_island:
             print(px, py)
             event_list = pygame.event.get()
@@ -1827,9 +1954,43 @@ while running:
                 SCREEN.blit(ui_font.render(str(market_prices['silver']), False, YELLOW), (850, 250))
                 SCREEN.blit(ui_font.render(str(market_prices['fairleaf']), False, YELLOW), (850, 295))
 
+                # items select buttons
+                btn1.on_click(event_list, mouse_pos, select_item, ('Apefruit',))
+                btn2.on_click(event_list, mouse_pos, select_item, ('Sweet Sand',))
+                btn3.on_click(event_list, mouse_pos, select_item, ('Tresfruit',))
+                btn4.on_click(event_list, mouse_pos, select_item, ('Gold',))
+                btn5.on_click(event_list, mouse_pos, select_item, ('Silver',))
+                btn6.on_click(event_list, mouse_pos, select_item, ('Fair Leaf',))
+
+                btn1.draw(SCREEN,450, 200)
+                btn2.draw(SCREEN,450, 250)
+                btn3.draw(SCREEN,450, 300)
+
+                btn4.draw(SCREEN,950, 200)
+                btn5.draw(SCREEN,950, 250)
+                btn6.draw(SCREEN,950, 300)
+
                 # buy and item select 
-                SCREEN.blit(ui_font.render(market_selected_item, False, WHITE), (150, 400))
-                SCREEN.blit(ui_font.render(str(market_selected_item_qty), False, WHITE), (250, 400))
+                SCREEN.blit(ui_font.render(market_selected_item, False, WHITE), (500, 400))
+                SCREEN.blit(ui_font.render(str(market_selected_item_qty), False, WHITE), (850, 400))
+
+                try:
+                    buy_market_btn.on_click(event_list, mouse_pos, buy_goods_action, (market_selected_item, market_selected_item_qty, market_prices))
+
+                except:
+                    ...
+
+                sell_market_btn.on_click(event_list, mouse_pos, sell_goods_action, (market_selected_item, market_selected_item_qty, market_prices))
+                
+                
+
+                buy_market_btn.draw(SCREEN, 500, 450)
+
+                sell_market_btn.draw(SCREEN, 850, 450)
+                
+                message = small_font.render(buy_market_message, False, (227, 19, 8))
+
+                SCREEN.blit(message, (630, 450))
 
             elif current_building == fish:
                 # SELL FISH
@@ -1840,11 +2001,19 @@ while running:
                 npc_talking1.update()
                 npc_talking1.draw(SCREEN, -200, -90)
 
+                sfm = small_font.render(sell_fish_message, True,(227, 19, 8) )
+
+                SCREEN.blit(sfm, (100, 100))
+
                 display_inventory_slots('player')
                 for i in range(1,6):
-                    exec(f'player_slot{i}.on_hold(pygame.mouse.get_pressed(), mouse_pos, player_item_clicked, args=({i},))')
+                    exec(f'player_slot{i}.on_click(pygame.mouse.get_pressed(), mouse_pos, sell_fish_action, args=({i},))')
 
                 draw_player_slots('sell')
+
+            else:
+                buy_market_message = ''
+                sell_fish_message = ''
 
             pygame.display.flip()
 
