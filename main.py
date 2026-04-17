@@ -884,11 +884,14 @@ def buy_goods_action(item: str, qty: int, market_prices:int):
 
                 unsuccessful = False
 
+                dabloons -= cost
+                buy_market_message = 'Purchase Successful'
+
         if unsuccessful:
             num_items = len(inventory.items_list)
 
             # add items to inventory
-            unsuccessful = inventory.add_item({'name': item, 'qty':qty, 'rarity': 'Uncommon', 'x': 0, 'scale': 0.8}, num_items+1)
+            unsuccessful = inventory.add_item({'name': item, 'qty':qty, 'rarity': 'Uncommon', 'x': 0, 'scale': 0.8, 'description': f'{qty} units of cargo.'}, num_items+1)
                 
 
             if not unsuccessful:
@@ -931,24 +934,29 @@ def sell_goods_action(item:str, qty: int, market_prices:int):
         # delete from inventory
         for i in delete_indexes:
             inventory.items[i+1] = ''
-            inventory.items_list.pop(delete_indexes)
+            inventory.items_list.pop(i)
 
 def sell_fish_action(index_of_item: int):
+    global sell_fish_message, dabloons
     non_fish_names = ['apefruit', 'sweetsand', 'tresfruit', 'gold', 'silver', 'fairfruit']
     
     sell_item = inventory.items.get(index_of_item)
 
-    rarity = sell_item['rarity']
-
-    global sell_fish_message, dabloons
+    try:
+        rarity = sell_item['rarity']
+    except:
+        sell_fish_message = 'Cannot Sell.'
+        return
 
     # check if item is a fish
     if sell_item['name'] in non_fish_names:
-        sell_fish_message = 'Can\'t sell that item here. Try selling at the fruit stand.'
+        sell_fish_message = 'Can\'t sell that item here. Sell at the fruit stand.'
 
     else:
+        selected_item = inventory.items[index_of_item]
+        
         inventory.items[index_of_item] = ''
-        inventory.items_list.pop(index_of_item+1)
+        inventory.items_list.pop(inventory.items_list.index(selected_item))
 
         # add money
         value_dict = {'Common':15, 'Uncommon':25, 'Rare':50, 'Legendary': 9000, "Collectors": 100000}
@@ -1045,12 +1053,7 @@ while running:
                     if not hunger:
                         health = max(0, health-1)
 
-                elif event.type == THIRST_EVENT:
-                    thirst = max(0, thirst - 1)
-                    pygame.time.set_timer(THIRST_EVENT, random.randint(3000,30000))
 
-                    if not thirst:
-                        health = max(0, health-1)
 
                 elif event.type == TIREDNESS_EVENT:
                     tiredness = max(0, tiredness-random.randint(1,3))
@@ -1573,7 +1576,7 @@ while running:
             next_dest_txt = ui_font.render(f'NEXT DEST. {next_dest} NM', True, BROWN)
             health_txt = ui_font.render(f'HEALTH {health}%', True, RED)
             hunger_txt = ui_font.render(f'HUNGER {hunger}%', True, BROWN)
-            thirst_txt = ui_font.render(f'THIRST {thirst}%', True, OCEAN_BLUE)
+            #thirst_txt = ui_font.render(f'THIRST {thirst}%', True, OCEAN_BLUE)
             tiredness_txt = ui_font.render(f'TIREDNESS {tiredness}%', True, GRAY)
             mapui.draw()
 
@@ -1587,7 +1590,7 @@ while running:
             SCREEN.blit(next_dest_txt, (20,455))
             SCREEN.blit(health_txt, (400,410))
             SCREEN.blit(hunger_txt, (400,455))
-            SCREEN.blit(thirst_txt, (700,410))
+            #SCREEN.blit(thirst_txt, (700,410))
             SCREEN.blit(tiredness_txt, (700,455))
             coin.draw(SCREEN, 950, 5)
 
@@ -1895,6 +1898,28 @@ while running:
                     npc.run(SCREEN, [], do_movement=False, draw=True)
 
 
+            # DRAW UI
+            wood_panel_UI.draw(SCREEN, 0, 400)
+            coins_txt = ui_font.render(f'{dabloons}', True, YELLOW)
+            next_dest_txt = ui_font.render(f'NEXT DEST. {next_dest} NM', True, BROWN)
+            health_txt = ui_font.render(f'HEALTH {health}%', True, RED)
+            hunger_txt = ui_font.render(f'HUNGER {hunger}%', True, BROWN)
+            #thirst_txt = ui_font.render(f'THIRST {thirst}%', True, OCEAN_BLUE)
+            tiredness_txt = ui_font.render(f'TIREDNESS {tiredness}%', True, GRAY)
+
+
+  
+
+            SCREEN.blit(coins_txt, (870, 10))
+            SCREEN.blit(next_dest_txt, (20,455))
+            SCREEN.blit(health_txt, (400,410))
+            SCREEN.blit(hunger_txt, (400,455))
+            #SCREEN.blit(thirst_txt, (700,410))
+            SCREEN.blit(tiredness_txt, (700,455))
+            coin.draw(SCREEN, 950, 5)
+
+
+
             if current_player.player_interact_box.colliderect(hooded.sprite_rect):
                 hooded_talking.draw(SCREEN, 0,100)
 
@@ -2001,13 +2026,13 @@ while running:
                 npc_talking1.update()
                 npc_talking1.draw(SCREEN, -200, -90)
 
-                sfm = small_font.render(sell_fish_message, True,(227, 19, 8) )
+                sfm = ui_font.render(sell_fish_message, True,(227, 19, 8) )
 
-                SCREEN.blit(sfm, (100, 100))
+                SCREEN.blit(sfm, (20, 20))
 
                 display_inventory_slots('player')
                 for i in range(1,6):
-                    exec(f'player_slot{i}.on_click(pygame.mouse.get_pressed(), mouse_pos, sell_fish_action, args=({i},))')
+                    exec(f'player_slot{i}.on_click(event_list, mouse_pos, sell_fish_action, args=({i},))')
 
                 draw_player_slots('sell')
 
