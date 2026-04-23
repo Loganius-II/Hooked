@@ -19,6 +19,7 @@ from tilemaps import *
 pygame.init()
 SCREEN = pygame.display.set_mode((1000,500))
 clock = pygame.time.Clock()
+elapsed_time_sec = 0
 running = True
 font = pygame.font.Font('Font/slkscr.ttf', 18)
 ui_font = pygame.font.Font('Font/slkscr.ttf', 30)
@@ -26,7 +27,9 @@ footer_font = pygame.font.Font('Font/slkscr.ttf', 15)
 dialogue_font = pygame.font.Font('Font/slkscr.ttf', 19)
 small_font = pygame.font.Font('Font/slkscr.ttf', 12)
 
-VERSION = '0.2.0'
+GAME_LENGTH = 10
+
+VERSION = '0.6.5'
 
 # roll the music
 sounds.play_theme()
@@ -51,6 +54,11 @@ walkingy = False
 playerx = 150
 playery = 80
 
+# different endings: you return icarus to the hooded dude
+game_ending = None
+
+icarus_caught = False
+
 shipx = 100
 shipy = 100
 ship_angle = 0
@@ -61,7 +69,7 @@ facing_left = False
 facing_up = False
 facing_down = False
 # player stats
-dabloons = 100
+dabloons = 1000
 health = 100
 hunger = 1
 thirst = 100
@@ -236,6 +244,7 @@ BACKGROUND_COMMON = sprites.Sprite('Sprites/common-item-card.png',300,300,CARD_S
 BACKGROUND_UNCOMMON = sprites.Sprite('Sprites/uncommon-item-card.png',300,300,CARD_SCALE)
 BACKGROUND_RARE = sprites.Sprite('Sprites/rare-item-card.png',300,300,CARD_SCALE)
 BACKGROUND_LEGENDARY = sprites.Sprite('Sprites/legendary-item-card.png',300,300,CARD_SCALE)
+BACKGROUND_COLLECTORS = sprites.Sprite('Sprites/collectors-item-card.png',300,300,CARD_SCALE)
 
 EAT_BTN_WIDTH = 300
 eat_btn = sprites.Sprite('Sprites/eat-btn.png', EAT_BTN_WIDTH, 50, scale=0.74)
@@ -341,6 +350,27 @@ def move_background():
         if bg.posx <= -800:
             bg.posx += 2400  # 3 * 800
         bg.change_posx(bg.posx - 1)
+
+def buy_night(nights: int):
+    # pass the amount of nights you are purchasing
+
+    global tiredness, dabloons, buy_nights_message
+
+    price_book ={1:325 , 2: 600 , 3: 850}
+
+    increase_pct = nights * 20
+
+    if price_book[nights] >= dabloons:
+        # not enough money
+        buy_nights_message = 'Not enough dabloons!'
+        return
+
+    dabloons -= price_book[nights]
+
+    tiredness += increase_pct 
+
+    buy_nights_message = f'Bought {nights} nights!'
+
 
 
 def draw_player_slots(mode='normal'):
@@ -611,6 +641,9 @@ def show_card(item: dict, x, y, scale = 0.8, new = False) -> sprites.Sprite:
 
     if rarity == 'Legendary':
         card = BACKGROUND_LEGENDARY
+    
+    elif rarity == 'Collectors':
+        card = BACKGROUND_COLLECTORS
 
     card.scale = scale
     card.frames = card.load_frames()
@@ -639,7 +672,8 @@ def show_card(item: dict, x, y, scale = 0.8, new = False) -> sprites.Sprite:
             'Common': GREEN,
             'Uncommon': LIGHT_GREEN,
             'Rare': BLUE,
-            'Legendary': (0,0,0)
+            'Legendary': (0,0,0),
+            'Collectors': (200, 200, 0)
             }
 
         # rarity display
@@ -836,6 +870,13 @@ def draw_ship_marker():
 def buy_house():
     global dabloons
     dabloons -= 10000 if dabloons >= 10000 else 0
+
+    # YOU BOUGTH HOUSE AND SETTLED
+    # cut sceen
+
+    pygame.display.quit()
+
+
 
 def next_dialogue(dialogue_list: list):
     # increments dialogue index
@@ -1066,6 +1107,19 @@ while running:
                     # when the clock ticks which means about a second passed
                     # add everything here that you want to encorporate the witht he clock
 
+                    elapsed_time_sec += 1
+
+                    # exit game cuz you died
+                    if health == 0:
+                        SCREEN.fill((0,0,0))
+                        you_died_txt = ui_font.render('YOU DIED.', False, WHITE)
+                        you_died_txt_w = center_x(you_died_txt)
+                        SCREEN.blit(you_died_txt, (you_died_txt_w,250))
+
+                        pygame.display.update()
+                        pygame.time.delay(3000)
+                        pygame.display.quit()
+
                     # set ticked global to true
                     clock_tick = True
 
@@ -1201,7 +1255,7 @@ while running:
                                 # check if the range is within green square and apply an offsetx
                                 caught = mathmatics.coordinate_range_x(green_square.x, right_of_green_square_x, fish_cursor_x+50)
 
-                                if caught:
+                                if caught and elapsed_time_sec < GAME_LENGTH or icarus_caught:
                                     # display the card and roll
                                     item = roll()
                                     display_card = True
@@ -1211,13 +1265,27 @@ while running:
                                     add_failed = inventory.add_item(item, len(inventory.items_list) +1)
 
                                     # if it returns true then it wasnt added
-                                    print(inventory.items)
+                                    
                                     if add_failed:
                                         top_left_dialogue_text_str = "INVENTORY FULL"
                                         top_left_dialogue_txt = font.render(top_left_dialogue_text_str, True, RED)
                                         sounds.error()
 
+                                elif caught and elapsed_time_sec >= GAME_LENGTH:
+                                    # CATCH ICARUS
+                                    item = {"name": "Icarus", "rarity": "Collectors", "description": "Unknown powers...what shall one do with such a find.", "edible": False, "img":"icarus.png"}
+                                    
+                                    item['x'] = -5
 
+                                    add_failed = inventory.add_item(item, len(inventory.items_list) +1)
+
+                                    if add_failed:
+                                        top_left_dialogue_text_str = "INVENTORY FULL"
+                                        top_left_dialogue_txt = font.render(top_left_dialogue_text_str, True, RED)
+                                        sounds.error()
+                                    
+                                    else:
+                                        icarus_caught = True
 
                                 else:
                                     try:
@@ -1592,7 +1660,7 @@ while running:
             SCREEN.blit(hunger_txt, (400,455))
             #SCREEN.blit(thirst_txt, (700,410))
             SCREEN.blit(tiredness_txt, (700,455))
-            coin.draw(SCREEN, 950, 5)
+            coin.draw(SCREEN, 810, 5)
 
             if open_cargo:
                 #clicked = btn.rect.collidepoint(mouse_pos)
@@ -1705,6 +1773,7 @@ while running:
         # talking npcs
         npc_talking1 = sprites.Sprite('Sprites/island-UI/NPC-talking1.png', 500, 250)
         npc_talking2 = sprites.Sprite('Sprites/island-UI/NPC-talking2.png', 500, 250)
+        npc_talking3 = sprites.Sprite('Sprites/island-UI/NPC-talking3.png', 500, 250, 1.2)
 
         hooded_talking = sprites.Sprite('Sprites/island-UI/hooded-talking.png', 500, 250, 1)
 
@@ -1716,11 +1785,13 @@ while running:
         
         dialogue = footer_font.render('', False, WHITE)
 
+        buy_nights_message = ''
+
         market_selected_item = 'None'
         market_selected_item_qty = 0
 
         # dock cutscene
-        island_cutscene = sprites.Sprite(
+        '''island_cutscene = sprites.Sprite(
             'Sprites/island-cutscene.png', 500, 250
         )
 
@@ -1729,7 +1800,7 @@ while running:
             island_cutscene.update()
             time.sleep(0.01)
 
-            pygame.display.update()
+            pygame.display.update()'''
 
 
         # item select buttons for fruit stand
@@ -1739,6 +1810,10 @@ while running:
         btn4 = sprites.Button_UI('+', 20, 20, WHITE , text_color=(0,0,0))
         btn5 = sprites.Button_UI('+', 20, 20, WHITE , text_color=(0,0,0))
         btn6 = sprites.Button_UI('+', 20, 20, WHITE , text_color=(0,0,0))
+
+        one_night_btn = sprites.Button_UI('Buy 1 Night', 100, 25, (0,0,0),font_name='Font/slkscr.ttf', font_size=12)
+        two_night_btn = sprites.Button_UI('Buy 2 Nights', 100, 25, (0,0,0), font_name='Font/slkscr.ttf', font_size=12)
+        three_night_btn = sprites.Button_UI('Buy 3 Nights', 100, 25, (0,0,0), font_name='Font/slkscr.ttf', font_size=12)
 
         buy_market_btn = sprites.Button_UI('BUY', 100, 25, WHITE, font_name='Font/slkscr.ttf', text_color=(0, 224, 24))
         sell_market_btn = sprites.Button_UI('SELL', 100, 25, WHITE, font_name='Font/slkscr.ttf', text_color=(224, 0, 0))
@@ -1907,16 +1982,13 @@ while running:
             #thirst_txt = ui_font.render(f'THIRST {thirst}%', True, OCEAN_BLUE)
             tiredness_txt = ui_font.render(f'TIREDNESS {tiredness}%', True, GRAY)
 
-
-  
-
             SCREEN.blit(coins_txt, (870, 10))
             SCREEN.blit(next_dest_txt, (20,455))
             SCREEN.blit(health_txt, (400,410))
             SCREEN.blit(hunger_txt, (400,455))
             #SCREEN.blit(thirst_txt, (700,410))
             SCREEN.blit(tiredness_txt, (700,455))
-            coin.draw(SCREEN, 950, 5)
+            coin.draw(SCREEN, 810, 5)
 
 
 
@@ -2035,6 +2107,27 @@ while running:
                     exec(f'player_slot{i}.on_click(event_list, mouse_pos, sell_fish_action, args=({i},))')
 
                 draw_player_slots('sell')
+
+            if current_building == inn:
+   
+                one_night_btn.on_click(event_list, mouse_pos, buy_night, (1,))
+                two_night_btn.on_click(event_list, mouse_pos, buy_night, (2,))
+                three_night_btn.on_click(event_list, mouse_pos, buy_night, (3,))
+                sprites.Sprite('Sprites/island-UI/tavernsign.png', 500, 250, 1.3).draw(SCREEN, 200, 0)
+
+                npc_talking3.update()
+
+                npc_talking3.draw(SCREEN, 0, 100)
+
+                one_night_btn.draw(SCREEN, 560,170)
+                two_night_btn.draw(SCREEN, 560, 220)
+                three_night_btn.draw(SCREEN, 560, 270)
+
+                sfm = ui_font.render(buy_nights_message, True,(227, 19, 8) )
+
+                SCREEN.blit(sfm, (20, 20))
+                
+
 
             else:
                 buy_market_message = ''
