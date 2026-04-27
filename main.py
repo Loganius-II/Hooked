@@ -35,7 +35,7 @@ VERSION = '0.6.5'
 sounds.play_theme()
 
 # home, game, etc. screens global switcher
-current_screen = 'island'
+current_screen = 'home'
 
 # global colors
 WHITE = (255,255,255)
@@ -69,7 +69,7 @@ facing_left = False
 facing_up = False
 facing_down = False
 # player stats
-dabloons = 1000
+dabloons = 10000
 health = 100
 hunger = 1
 thirst = 100
@@ -873,6 +873,19 @@ def buy_house():
 
     # YOU BOUGTH HOUSE AND SETTLED
     # cut sceen
+    txts = ['Contragulations.', 'You bought a house and was able to settle on an island.', 'You finished the game.', 'However', 'There is another ending...']
+
+    for txt in txts:
+        txt_surface = font.render(txt, False, WHITE)
+
+        middle = center_x(txt_surface)
+
+        SCREEN.fill((0,0,0))
+
+        SCREEN.blit(txt_surface, (middle, 200))
+
+        pygame.display.update()
+        pygame.time.delay(2000)
 
     pygame.display.quit()
 
@@ -1055,13 +1068,14 @@ def title_screen():
     pygame.display.flip()
     pygame.time.delay(5000)
 
+
 talking = False
 def talk_to_hooded():
     global talking
 
     talking = True
 
-#title_screen()
+title_screen()
 
 # randomly generating map
 print('loading map...')
@@ -1071,6 +1085,7 @@ mapui.generate_map()
 mapui.resolve_island_overlap()
 t = time.time() - t
 print('loaded in', t, 'seconds')
+
 
 # game loop
 while running:
@@ -1402,7 +1417,7 @@ while running:
 
                             player_slot_coords[i]['currenty'] = PLAYER_SLOT_DEFAULT_Y
 
-                    elif mapui.map_paper_sprite_surface.get_rect(topleft=(mapui.x, mapui.y)).collidepoint(mouse_pos):
+                    elif mapui.map_paper_sprite_surface.get_rect(topleft=(mapui.x, mapui.y)).collidepoint(pygame.mouse.get_pos()):
                         if mouse_pos == (flagx, flagy):
                             flag = False
 
@@ -2006,7 +2021,29 @@ while running:
                     talk_button.draw(SCREEN, 200, 400)
 
                 else:
-                    cd = sprites.hd[cdialogue_index]
+
+                    if  not icarus_caught:
+                        cd = sprites.hd[cdialogue_index]
+                    
+                    else:
+                        if cdialogue_index == len(sprites.hd_found):
+                            # FINISH GAME SCREEN
+                            txts = ['Black.','Everything goes black.', 'He wipes your memory and drops you off in a new waters.', 'He is searching for a new treasure.', 'And you will help him again.', 'How many times has this happened?']
+
+                            for txt in txts:
+                                txt_surface = font.render(txt, False, WHITE)
+
+                                middle = center_x(txt_surface)
+
+                                SCREEN.fill((0,0,0))
+
+                                SCREEN.blit(txt_surface, (middle, 200))
+
+                                pygame.display.update()
+                                pygame.time.delay(3000)
+
+
+                        cd = sprites.hd_found[cdialogue_index]
 
 
                     # draw the dialogue on the screen
@@ -2192,6 +2229,20 @@ while running:
             clock_tick = False
 
             clock.tick(60)
+
+        txts = ['Welcome.','You don\'t remember where you are or why.', 'All you have is your map, fishing pole, and raft.', 'Images of a hooded figure flash in your mind.','Hmm.', 'Maybe you should find a house to settle in.']
+
+        for txt in txts:
+            txt_surface = font.render(txt, False, WHITE)
+
+            middle = center_x(txt_surface)
+
+            SCREEN.fill((0,0,0))
+
+            SCREEN.blit(txt_surface, (middle, 200))
+
+            pygame.display.update()
+            pygame.time.delay(2500)
 
 
 pygame.quit()
