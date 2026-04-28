@@ -29,13 +29,13 @@ small_font = pygame.font.Font('Font/slkscr.ttf', 12)
 
 GAME_LENGTH = 10
 
-VERSION = '0.6.5'
+VERSION = '0.6.10'
 
 # roll the music
 sounds.play_theme()
 
 # home, game, etc. screens global switcher
-current_screen = 'home'
+current_screen = 'island'
 
 # global colors
 WHITE = (255,255,255)
@@ -318,7 +318,7 @@ player_pack_x = 0
 player_pack_y = 0
 player_pack_rect = player_pack.frames[0].get_rect()
 
-island_at = 0
+island_at = 2
 sell_fish_message = ''
 
 # SFX VARS
@@ -1075,7 +1075,7 @@ def talk_to_hooded():
 
     talking = True
 
-title_screen()
+#title_screen()
 
 # randomly generating map
 print('loading map...')
@@ -1090,6 +1090,7 @@ print('loaded in', t, 'seconds')
 # game loop
 while running:
     if current_screen == 'game':
+        current_player = player_walking
         game = True
         threading.Thread(target=sounds.enter_sea).start()
 
@@ -1289,7 +1290,7 @@ while running:
                                 elif caught and elapsed_time_sec >= GAME_LENGTH:
                                     # CATCH ICARUS
                                     item = {"name": "Icarus", "rarity": "Collectors", "description": "Unknown powers...what shall one do with such a find.", "edible": False, "img":"icarus.png"}
-                                    
+                                    display_card = True
                                     item['x'] = -5
 
                                     add_failed = inventory.add_item(item, len(inventory.items_list) +1)
@@ -1886,9 +1887,15 @@ while running:
             # grass background
             gravel_sprite_bg.draw(SCREEN, 0,0)
 
+            towns = [town1, town2, town3]
+            town_invert_h = [town1_invert_h,town2_invert_h,town3_invert_h]
+
+            current_town = towns[island_at -1]
+            current_town_invert_h = town_invert_h[island_at -1]
+
             # build land_obj_list from all tiles for NPC collision
             land_obj_list = []
-            for row_index, row in enumerate(town1):
+            for row_index, row in enumerate(current_town):
                 for col_index, tile in enumerate(row):
                     if tile != 0:
                         tile_sprite = tiles[0] if tile == 0 else tiles[tile -1] if tile != 1 else None
@@ -1910,7 +1917,7 @@ while running:
                 npc.run(SCREEN, land_obj_list, do_movement=True, draw=False)
 
             # first drawing the ground
-            for row_index, row in enumerate(town1):
+            for row_index, row in enumerate(current_town):
                 for col_index, tile in enumerate(row):
                     if tile != 0:
                         tile_sprite = tiles[0]
@@ -1943,7 +1950,7 @@ while running:
                 npc.above = False
             
             current_building = None
-            for row_index, row in enumerate(town1):
+            for row_index, row in enumerate(current_town):
                 for col_index, tile in enumerate(row):
                     if tile != 1:
                         
@@ -1958,7 +1965,7 @@ while running:
                         # create base rect for collisions
                         tile_sprite.rectangle.h = 40
                         
-                        invert_h = town1_invert_h[row_index][col_index]
+                        invert_h = current_town_invert_h[row_index][col_index]
                         tile_sprite.change_posx(tile_x)
                         tile_sprite.change_posy(tile_y)
                         tile_sprite.rectangle.y = tile_y + tile_sprite.frames[0].get_height() -30

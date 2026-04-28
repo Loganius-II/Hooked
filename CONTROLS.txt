@@ -1,16 +1,26 @@
-press 1 to get fish rod
-click in water to fish
+~~ON RAFT~~
 
-hover over backpack and press number keys to display items
+- press 1 to get fish rod
+- click in water to fish
 
-press wasd to move
+- hover cursor over backpack and press number keys to display items
 
-click on map to set destination
+ - press wasd to move
 
-WHILE ANCHOR UP:
-A and D to steer
+- click on map to set destination
 
-DO NOT DARE TO SAIL AWAY FROM THE MAP
+~~COOKER~~
+- Drag a rusty boot or wet news paper into the fuel slot 
+- drag a fish into the food slot and it will cook the food, giving you more hunger points
 
-**Work in progress rightnow**
-Sail to an island and enjoy the scenery for now
+~~WHILE ANCHOR UP~~
+- A and D to steer
+- DO NOT DARE TO SAIL AWAY FROM THE MAP
+
+~~ISLANDS~~
+- Walk up to different booths to display the Menu Uis for them
+- walk away to close it 
+- press E to exit island
+
+~~FINISHING THE GAME~~
+- There are two ways to finish the game... can you get them both?
