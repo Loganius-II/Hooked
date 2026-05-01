@@ -27,15 +27,18 @@ footer_font = pygame.font.Font('Font/slkscr.ttf', 15)
 dialogue_font = pygame.font.Font('Font/slkscr.ttf', 19)
 small_font = pygame.font.Font('Font/slkscr.ttf', 12)
 
-GAME_LENGTH = 10
+# about a couple mins
+GAME_LENGTH = 1000
 
-VERSION = '0.6.10'
+SHOWTITLESCREEN= False
+
+VERSION = '0.8.9'
 
 # roll the music
 sounds.play_theme()
 
 # home, game, etc. screens global switcher
-current_screen = 'island'
+current_screen = 'home'
 
 # global colors
 WHITE = (255,255,255)
@@ -54,9 +57,6 @@ walkingy = False
 playerx = 150
 playery = 80
 
-# different endings: you return icarus to the hooded dude
-game_ending = None
-
 icarus_caught = False
 
 shipx = 100
@@ -69,7 +69,7 @@ facing_left = False
 facing_up = False
 facing_down = False
 # player stats
-dabloons = 10000
+dabloons = 1000
 health = 100
 hunger = 1
 thirst = 100
@@ -318,7 +318,7 @@ player_pack_x = 0
 player_pack_y = 0
 player_pack_rect = player_pack.frames[0].get_rect()
 
-island_at = 2
+island_at = 3
 sell_fish_message = ''
 
 # SFX VARS
@@ -446,7 +446,6 @@ def display_inventory_slots(slot_type:str):
             rarity = cargo_inventory.items.get(i)
 
         else:
-            print('NOT A VALID SLOT TYPE')
             return
 
         if rarity:
@@ -784,7 +783,7 @@ def view_inventory_card(number_pressed: int) -> tuple[dict, bool]:
     # returns the inventory item and true or false
     # to set the displaying card variable
     try:
-        print(inventory.items)
+    
         return inventory.items[number_pressed], True
     except:
         return False, False
@@ -819,12 +818,12 @@ def draw_ship_marker():
     if not anchored:
         # go forward
         # based on angle
-        shipx, shipy = mathmatics.calculate_new_xy((shipx, shipy), 0.05, -ship_angle-110)
+        shipx, shipy = mathmatics.calculate_new_xy((shipx, shipy), 0.08, -ship_angle-110)
 
         # check if running into island
         for island in mapui.island_sprite_list:
             if marker_rect.colliderect(island.rectangle):
-                print('ISLAND')
+            
                 game = False
                 current_screen = "island"
 
@@ -869,25 +868,25 @@ def draw_ship_marker():
 
 def buy_house():
     global dabloons
-    dabloons -= 10000 if dabloons >= 10000 else 0
 
-    # YOU BOUGTH HOUSE AND SETTLED
-    # cut sceen
-    txts = ['Contragulations.', 'You bought a house and was able to settle on an island.', 'You finished the game.', 'However', 'There is another ending...']
+    if dabloons >= 10000:
+        # YOU BOUGTH HOUSE AND SETTLED
+        # cut sceen
+        txts = ['Contragulations.', 'You bought a house and was able to settle on an island.', 'You finished the game.', 'However', 'There is another ending...']
 
-    for txt in txts:
-        txt_surface = font.render(txt, False, WHITE)
+        for txt in txts:
+            txt_surface = font.render(txt, False, WHITE)
 
-        middle = center_x(txt_surface)
+            middle = center_x(txt_surface)
 
-        SCREEN.fill((0,0,0))
+            SCREEN.fill((0,0,0))
 
-        SCREEN.blit(txt_surface, (middle, 200))
+            SCREEN.blit(txt_surface, (middle, 200))
 
-        pygame.display.update()
-        pygame.time.delay(2000)
+            pygame.display.update()
+            pygame.time.delay(2000)
 
-    pygame.display.quit()
+        pygame.display.quit()
 
 
 
@@ -895,7 +894,7 @@ def next_dialogue(dialogue_list: list):
     # increments dialogue index
     global cdialogue_index
 
-    print('click')
+
     cdialogue_index += 1
 
     cdialogue_index = 0 if cdialogue_index >= len(dialogue_list) else cdialogue_index
@@ -949,11 +948,13 @@ def buy_goods_action(item: str, qty: int, market_prices:int):
                 
 
             if not unsuccessful:
+                sounds.woman_yes()
                 # actually purchase item
                 dabloons -= cost
                 buy_market_message = 'Purchase Successful'
             
             else:
+                sounds.woman_rejected()
                 # display a message saying it couldnt add to inventory
                 buy_market_message = 'Unable to Add to Inventory'
 
@@ -978,17 +979,29 @@ def sell_goods_action(item:str, qty: int, market_prices:int):
             delete_indexes.append(inventory.items_list.index(slot_item))
 
 
+
+
     if num_of_item < qty:
+        sounds.woman_rejected()
         buy_market_message = f'Not enough {item_name}'
     
     else:
         dabloons += sell_price
+        sounds.woman_yes()
         buy_market_message = f'Sold {num_of_item} {item_name}'
 
         # delete from inventory
+        # iterate over deleteing one at a time
         for i in delete_indexes:
-            inventory.items[i+1] = ''
-            inventory.items_list.pop(i)
+            inventory.items_list[i]['qty'] -= qty if qty <= inventory.items_list[i]['qty'] else  inventory.items_list[i]['qty']
+
+            qty -= qty if qty <= inventory.items_list[i]['qty'] else  inventory.items_list[i]['qty']
+
+            
+            # delete if it runs out
+            if inventory.items_list[i]['qty'] <= 0:
+                inventory.items[i+1] = ''
+                inventory.items_list.pop(i)
 
 def sell_fish_action(index_of_item: int):
     global sell_fish_message, dabloons
@@ -1075,16 +1088,15 @@ def talk_to_hooded():
 
     talking = True
 
-#title_screen()
+title_screen() if SHOWTITLESCREEN else None
 
 # randomly generating map
-print('loading map...')
 t = time.time()
 mapui = sprites.Map_UI(SCREEN)
 mapui.generate_map()
 mapui.resolve_island_overlap()
 t = time.time() - t
-print('loaded in', t, 'seconds')
+
 
 
 # game loop
@@ -1122,7 +1134,7 @@ while running:
                 elif event.type == GENERIC_CLOCK_EVENT:
                     # when the clock ticks which means about a second passed
                     # add everything here that you want to encorporate the witht he clock
-
+                    
                     elapsed_time_sec += 1
 
                     # exit game cuz you died
@@ -1273,6 +1285,7 @@ while running:
 
                                 if caught and elapsed_time_sec < GAME_LENGTH or icarus_caught:
                                     # display the card and roll
+                                    print('Elapesed time:',elapsed_time_sec)
                                     item = roll()
                                     display_card = True
 
@@ -1330,7 +1343,7 @@ while running:
                             if not cooker_open:
                                 for j, cargo_slot in enumerate(cargo_slot_list):
                                     if cargo_slot.rect.colliderect(player_slot):
-                                        print(f'player slot {i+1} interacted with cargo slot {j+1}')
+                                        
                                         if player_slot.rect.collidepoint(mouse_pos):
                                             if player_slot.rect.collidepoint(mouse_pos) and cargo_slot.rect.collidepoint(mouse_pos):
                                                 # if both are touching
@@ -1338,23 +1351,20 @@ while running:
                                                 # attempt transfer to the empty slot
                                                 if inventory.items[i+1] and not cargo_inventory.items[j+1]:
                                                     cargo_inventory.transfer_item(inventory, i+1, j+1)
-                                                    print(i, j)
+                                                  
 
                                                 elif not inventory.items[i+1] and cargo_inventory.items[j+1]:
                                                     inventory.transfer_item(cargo_inventory, j+1, i+1)
-                                                    print(2)
-                                                    print(i, j)
+                                       
 
                                                 else:
                                                     # just swap
-                                                    print(3)
+                                                   
                                                     inventory.transfer_item(cargo_inventory, j+1, i+1)
                                             else:
                                                 cargo_inventory.transfer_item(inventory, i+1, j+1)
-                                                print('transfering to cargo')
                                         else:
                                             inventory.transfer_item(cargo_inventory, j+1, i+1)
-                                            print('transfering to inventory')
                                         break
 
                             # for cooker
@@ -1763,6 +1773,8 @@ while running:
         # for z index of player
         player_above = False
 
+        dialogue_played = False
+
         p_walking = sprites.Player(
             'Sprites/player-walking.png', 23, 56, 1,
             PLAYER_INTERACT_BOX_OFFSETX=10,
@@ -1835,7 +1847,6 @@ while running:
         sell_market_btn = sprites.Button_UI('SELL', 100, 25, WHITE, font_name='Font/slkscr.ttf', text_color=(224, 0, 0))
 
         while in_island:
-            print(px, py)
             event_list = pygame.event.get()
             for event in event_list:
                 if event.type == pygame.QUIT:
@@ -2017,6 +2028,10 @@ while running:
             if current_player.player_interact_box.colliderect(hooded.sprite_rect):
                 hooded_talking.draw(SCREEN, 0,100)
 
+                if not dialogue_played:
+                    dialogue_played = True
+                    sounds.play_man_talking()
+
                 talk_button.on_click(event_list, mouse_pos, talk_to_hooded)
 
                 if time.time() - initial_time >= 0.01 and talking:
@@ -2074,7 +2089,11 @@ while running:
             
             elif current_building == fruit:
                 # dict containing market info on current island
-                market_prices = mapui.market_list[island_at]
+                market_prices = mapui.market_list[island_at -1]
+
+                if not dialogue_played:
+                    dialogue_played = True
+                    sounds.play_woman_talking()
 
                 if time.time() - initial_time >= 0.01:
                     npc_talking2.update()
@@ -2135,6 +2154,9 @@ while running:
 
             elif current_building == fish:
                 # SELL FISH
+                if not dialogue_played:
+                    dialogue_played = True
+                    sounds.play_man_talking()
 
                 sprites.Sprite('Sprites/island-UI/fish.png', 500, 250, 0.9).draw(SCREEN, 450, 100)
 
@@ -2152,8 +2174,11 @@ while running:
 
                 draw_player_slots('sell')
 
-            if current_building == inn:
-   
+            elif current_building == inn:
+                if not dialogue_played:
+                    dialogue_played = True
+                    sounds.play_man_talking()
+
                 one_night_btn.on_click(event_list, mouse_pos, buy_night, (1,))
                 two_night_btn.on_click(event_list, mouse_pos, buy_night, (2,))
                 three_night_btn.on_click(event_list, mouse_pos, buy_night, (3,))
@@ -2176,6 +2201,10 @@ while running:
             else:
                 buy_market_message = ''
                 sell_fish_message = ''
+                print(f'resetting dialogue played to false {time.time()}')
+                dialogue_played = False
+                pygame.mixer.stop()
+                
 
             pygame.display.flip()
 

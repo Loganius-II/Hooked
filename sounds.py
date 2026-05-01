@@ -60,6 +60,28 @@ def click():
     s.set_volume(10)
     s.play()
 
+def play_man_talking():
+    rand_path = random.choice(['talking1.mp3', 'eblanizhe.wav', 'blydon.wav', 'davalka.wav'])
+
+    s = mixer.Sound(f'MusicAndSFX/{rand_path}')
+    s.set_volume(1.3)
+    s.play()
+
+def play_woman_talking():
+    s = mixer.Sound(f'MusicAndSFX/germanwoman.wav')
+    s.set_volume(1.3)
+    s.play()
+
+def woman_yes():
+    s = mixer.Sound(f'MusicAndSFX/yes.mp3')
+    s.set_volume(1.3)
+    s.play()
+
+def woman_rejected():
+    s = mixer.Sound(f'MusicAndSFX/rejected.wav')
+    s.set_volume(1.3)
+    s.play()
+
 def reel():
     # plays the reely sound
     # returns the sound object to stop it when you exit the ui
