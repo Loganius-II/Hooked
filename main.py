@@ -28,7 +28,7 @@ dialogue_font = pygame.font.Font('Font/slkscr.ttf', 19)
 small_font = pygame.font.Font('Font/slkscr.ttf', 12)
 
 # about a couple mins
-GAME_LENGTH = 1000
+GAME_LENGTH = 700
 
 SHOWTITLESCREEN= False
 
@@ -69,7 +69,7 @@ facing_left = False
 facing_up = False
 facing_down = False
 # player stats
-dabloons = 1000
+dabloons = 10
 health = 100
 hunger = 1
 thirst = 100
@@ -320,6 +320,7 @@ player_pack_rect = player_pack.frames[0].get_rect()
 
 island_at = 3
 sell_fish_message = ''
+press_f = ''
 
 # SFX VARS
 reel_sfx = None
@@ -618,8 +619,7 @@ def show_card(item: dict, x, y, scale = 0.8, new = False) -> sprites.Sprite:
     # new is if the card is new so it can play sound
     # reel sfx is the mixer sound object to controll it
 
-    if new:
-        sounds.badadadink()
+
 
 
     try:
@@ -964,7 +964,10 @@ def sell_goods_action(item:str, qty: int, market_prices:int):
     item = item.replace(' ', '')
 
     # money you get if sell successful
-    sell_price = qty * market_prices[item]
+    try:
+        sell_price = qty * market_prices[item]
+    except:
+        return
 
     global dabloons, buy_market_message
     
@@ -1284,6 +1287,7 @@ while running:
                                 caught = mathmatics.coordinate_range_x(green_square.x, right_of_green_square_x, fish_cursor_x+50)
 
                                 if caught and elapsed_time_sec < GAME_LENGTH or icarus_caught:
+                                    sounds.badadadink()
                                     # display the card and roll
                                     print('Elapesed time:',elapsed_time_sec)
                                     item = roll()
@@ -1301,6 +1305,7 @@ while running:
                                         sounds.error()
 
                                 elif caught and elapsed_time_sec >= GAME_LENGTH:
+                                    sounds.badadadink()
                                     # CATCH ICARUS
                                     item = {"name": "Icarus", "rarity": "Collectors", "description": "Unknown powers...what shall one do with such a find.", "edible": False, "img":"icarus.png"}
                                     display_card = True
@@ -1775,6 +1780,8 @@ while running:
 
         dialogue_played = False
 
+
+
         p_walking = sprites.Player(
             'Sprites/player-walking.png', 23, 56, 1,
             PLAYER_INTERACT_BOX_OFFSETX=10,
@@ -1845,6 +1852,9 @@ while running:
 
         buy_market_btn = sprites.Button_UI('BUY', 100, 25, WHITE, font_name='Font/slkscr.ttf', text_color=(0, 224, 24))
         sell_market_btn = sprites.Button_UI('SELL', 100, 25, WHITE, font_name='Font/slkscr.ttf', text_color=(224, 0, 0))
+
+        # play a random song
+        sounds.play_random_song()
 
         while in_island:
             event_list = pygame.event.get()
