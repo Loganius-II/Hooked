@@ -16,21 +16,21 @@ islands = [
     "Coralheart Island",
     "Driftwood Haven",
     "Sapphire Bay Isle",
-    "Thornbloom Cay",
+    "Thornbloom Bay",
     "Starwake Atoll",
     "Golden Lantern Isle",
     "Stormcradle Island",
     "Pearlstrand Key",
     "Tidewhisper Isle",
     "Crystal Drum Island",
-    "Emberfin Cay",
+    "Emberfin Bay",
     "Seafarer's Rest",
     "Mistveil Island",
     "Sunspire Shoal",
     "Willowtide Isle",
     "Blue Ember Atoll",
     "Sandstone Harbor Island",
-    "Silverpeak Cay",
+    "Silverpeak Bay",
     "Seraph Shore",
     "Humming Gull Isle",
     "Rosewater Island",
@@ -38,39 +38,39 @@ islands = [
     "Duskveil Isle",
     "Hidden Lantern Atoll",
     "Opalreef Island",
-    "Windpetal Cay",
+    "Windpetal Bay",
     "Sunblossom Isle",
     "Cragwhisper Key",
     "Nightglow Island",
     "Seamist Haven",
     "Coralvine Isle",
-    "Gleamwater Cay",
+    "Gleamwater Bay",
     "Skybreaker Island",
     "Mariners' Moon Key",
     "Sirenfall Isle",
     "Brightglass Shoal",
     "Willowfoam Island",
-    "Firecrest Cay",
+    "Firecrest Bay",
     "Eastwind Atoll",
     "Palmshadow Isle",
     "Driftglade Key",
     "Tidebound Island",
-    "Howling Lantern Cay",
+    "Howling Lantern Bay",
     "Sunsilk Isle",
     "Coralwhisper Haven",
     "Jadeflare Shoal",
     "Moonshadow Atoll",
     "Dappled Reef Island",
-    "Brineflower Cay",
+    "Brineflower Bay",
     "Nightreef Isle",
     "Sunmeadow Island",
     "Saltpetal Key",
     "Horizon Pearl Isle",
-    "Sablewind Cay",
+    "Sablewind Bay",
     "Frosttide Island",
     "Silverleaf Key",
     "Evermist Isle",
-    "Blue Lantern Cay",
+    "Blue Lantern Bay",
     "Brightshore Atoll",
     "Coralspire Island",
     "Lanternwake Key",
@@ -78,32 +78,31 @@ islands = [
     "Saltwind Haven",
     "Firepetal Atoll",
     "Quiet Harbor Isle",
-    "Tideglass Cay",
+    "Tideglass Bay",
     "Whisperfall Island",
     "Honeybay Key",
     "Opalstrand Isle",
-    "Reefdream Cay",
+    "Reefdream Bay",
     "Suncrest Island",
     "Driftfire Key",
     "Windblossom Isle",
-    "Mooncrown Cay",
+    "Mooncrown Bay",
     "Sapphire Lantern Island",
     "Gullsway Key",
     "Tideglen Isle",
-    "Coralshade Cay",
+    "Coralshade Bay",
     "Brinelight Atoll",
     "Dawntree Island",
     "Pearlwind Key",
     "Shadowglen Isle",
-    "Saltspire Cay",
+    "Saltspire Bay",
     "Emberwake Island",
     "Seacrown Key",
     "Whisperfoam Isle",
-    "Deeprose Cay",
+    "Deeprose Bay",
     "Stormbay Island",
     "Lilypad Key",
     "Bluewhisper Isle",
-    "Goldenbloom Cay",
     "Driftshore Island",
     "Sunspring Key"
 ]
@@ -177,9 +176,9 @@ class Sprite:
             frame = pygame.transform.flip(frame, invert_h, invert_v)
 
         # get the sprite rect at (x, y)
-        sprite_rect = frame.get_rect(topleft=(x, y))
+        self.sprite_rect = frame.get_rect(topleft=(x, y))
 
-        screen.blit(frame, sprite_rect)
+        screen.blit(frame, self.sprite_rect)
 
 
     def pg_surface(self) -> pygame.surface:
@@ -289,7 +288,7 @@ import pygame
 
 class Button_UI:
     def __init__(self, text: str, width: int | float, height: int | float, bg: tuple,
-                 custom_img_path: str = None, font_name=None, font_size=24):
+                 custom_img_path: str = None, font_name=None, font_size=24, text_color=(255,255,255)):
         # Initializes button and customizations
         self.text = text
         self.custom_img_path = custom_img_path
@@ -312,7 +311,7 @@ class Button_UI:
             self.image = pygame.transform.scale(self.image, (self.width, self.height))
 
         # text surface
-        self.text_surface = self.font.render(self.text, True, self.WHITE)
+        self.text_surface = self.font.render(self.text, True, text_color)
 
         # rect placeholder
         self.rect = pygame.Rect(0, 0, self.width, self.height)
@@ -364,7 +363,7 @@ class Button_UI:
         else:
             # simple colored rectangle
             color = self.on_hover() if self.hovered else self.bg
-            #pygame.draw.rect(screen, color, self.rect, border_radius=8)
+            pygame.draw.rect(screen, color, self.rect, border_radius=8)
 
         # Draw text centered
         text_rect = self.text_surface.get_rect(center=self.rect.center)
@@ -438,11 +437,28 @@ class Map_UI:
 
         self.screen = screen
 
-        self.ISLANDS_RANGE = (2,3) # tuple ranging least (incl) to highest (nonincl) amount of islands possible
+        self.ISLANDS_RANGE = (3,3) # tuple ranging least (incl) to highest (nonincl) amount of islands possible
 
         self.bg_path = 'Sprites/map-paper.png'
         self.map_paper_sprite = Sprite(self.bg_path, self.width, self.height, 2.5)
         self.map_paper_sprite_surface = self.map_paper_sprite.frames[0]
+
+        self.market_list = list() # list with coorsponding index market of islands
+
+    
+    def _gen_market_price(self):
+        # returns a dict of a market items and value
+
+        market = {'apefruit': 0, 'sweetsand': 0, 'tresfruit': 0, 'gold': 0 ,'silver': 0 ,'fairleaf': 0}
+
+        market["apefruit"] = self.random.randint(1, 10)
+        market["sweetsand"] = self.random.randint(5, 15)
+        market["tresfruit"] = self.random.randint(8, 30)
+        market["gold"] = self.random.randint(50, 250)
+        market["silver"] = self.random.randint(30, 100)
+        market["fairleaf"] = self.random.randint(2500, 5000)
+
+        self.market_list.append(market)
 
     def generate_map(self):
         # this is for generating all randomized parameters
@@ -457,6 +473,7 @@ class Map_UI:
         self.island_sprite_list = []
 
         self.island_name_list = []
+
 
         for _ in range(self.island_amount):
             # generating random island
@@ -483,20 +500,22 @@ class Map_UI:
             self.island_sprite_list.append(island_sprite)
             self.island_name_list.append(self.random.choice(islands))
 
+            self._gen_market_price()
+
             island_sprite.rectangle.inflate_ip(-40, -40)
 
 
     def resolve_island_overlap(self):
         # this will fix coordinates of overlapping islands
         for i, island in enumerate(self.island_sprite_list):
-            island_rect = island.frames[0].get_rect(topleft=(island.posx, island.posy))
+            island_rect = island.frames[0].get_rect(topleft=(island.posx+ self.x, island.posy+ self.y))
 
             for j, island2 in enumerate(self.island_sprite_list):
                 # dont compare same islands
                 if i == j:
                     continue
 
-                island2_rect = island2.frames[0].get_rect(topleft=(island2.posx, island2.posy))
+                island2_rect = island2.frames[0].get_rect(topleft=(island2.posx+ self.x, island2.posy+ self.y))
 
                 # if they are colliding
                 if island_rect.colliderect(island2_rect):
@@ -512,7 +531,7 @@ class Map_UI:
                             break
                         x = self.random.randint(20,90)
                         y = self.random.randint(20, 180)
-                        island2_rect.topleft = (x, y)
+                        island2_rect.topleft = (x+ self.y, y+ self.y)
 
 
     def draw(self):
@@ -525,6 +544,14 @@ class Map_UI:
 
 
             island.draw(self.screen, island.posx + self.x, island.posy + self.y)
+
+            island_width_middle = (island.frame_width * island.scale) // 2
+            island_height_middle = (island.frame_height * island.scale) // 2
+
+            island.rectangle = island.frames[0].get_rect(topleft=(island.posx + self.x + island_width_middle - 20, island.posy+ self.y + island_height_middle - 20))
+
+            island.rectangle.width = 30
+            island.rectangle.height = 30
 
             island_txt = ui_font.render(self.island_name_list[i], True, (255,255,255))
 
@@ -674,3 +701,12 @@ def get_img(sheet, frame, width = 128, height = 128, scale = 2) -> pygame.Surfac
     img.blit(sheet, (0,0), (frame*width, 0, width, height))
     img = pygame.transform.scale(img, (width * scale, height * scale))
     return img
+
+
+# DIALOGUES
+font = pygame.font.Font('Font/slkscr.ttf', 18)
+WHITE = (255,255,255)
+#hooded dialogue
+hd = ['Hello traveler.', 'You are not from around here.', 'Who I am will be revealed in time. ', 'I am looking for someone worthy of my journey.', 'Many treasures reside in the waters but I am looking for a sacred treasure', 'The lost wing of Icarus.', 'Icarus is a mythological creature with wings made of wax.', 'He flew too close to the sun and the wax melted.', 'Legend says he fell within these waters.', 'Bring it to me and I will reward you immensly.', '']
+hd_found = ['Icarus!', 'You have found the lost treasure','MOAHAhAhaHAhaH', '...*snatches*...', 'Oh and your reward...']
+

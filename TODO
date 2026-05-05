@@ -1,7 +1,9 @@
+next steps
+- randomize islands
+- working selling fish and displaying slots
+- make buyable goods
 
-Travelling
-    - if colliding with island then store and detect which island
-
+- go back and replace each fish and good with a picture
 
 Later add:
     - chance of something bad happening
