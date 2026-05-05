@@ -545,10 +545,13 @@ class Map_UI:
 
             island.draw(self.screen, island.posx + self.x, island.posy + self.y)
 
-            island.rectangle = island.frames[0].get_rect(topleft=(island.posx + self.x+ 5, island.posy+ self.y+ 5))
+            island_width_middle = (island.frame_width * island.scale) // 2
+            island_height_middle = (island.frame_height * island.scale) // 2
 
-            island.rectangle.width = 50
-            island.rectangle.height = 50
+            island.rectangle = island.frames[0].get_rect(topleft=(island.posx + self.x + island_width_middle - 20, island.posy+ self.y + island_height_middle - 20))
+
+            island.rectangle.width = 30
+            island.rectangle.height = 30
 
             island_txt = ui_font.render(self.island_name_list[i], True, (255,255,255))
 

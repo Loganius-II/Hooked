@@ -30,7 +30,7 @@ small_font = pygame.font.Font('Font/slkscr.ttf', 12)
 # about a couple mins
 GAME_LENGTH = 700
 
-SHOWTITLESCREEN= False
+SHOWTITLESCREEN= True
 
 VERSION = '0.8.9'
 
@@ -2257,6 +2257,7 @@ while running:
 
             # OPTIONS
             play.draw(SCREEN, 410, 300)
+            
 
             # the opposite of play since it returns true when clicked
             home = not play.is_clicked(events, pygame.mouse.get_pos())
